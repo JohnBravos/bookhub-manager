@@ -38,8 +38,4 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationStatus status = ReservationStatus.ACTIVE;
-
-    public enum ReservationStatus {
-        ACTIVE, FULFILLED, EXPIRED, CANCELLED
-    }
 }
