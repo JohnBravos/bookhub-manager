@@ -3,7 +3,7 @@ package com.JohnBravos.bookhub_manager.dto.Request;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record CreateLoanRequest(
         @NotNull(message = "User ID is required")
@@ -14,5 +14,5 @@ public record CreateLoanRequest(
 
         @NotNull(message = "Due date is required")
         @Future(message = "Due date must be in the future")
-        LocalDateTime dueDate
+        LocalDate dueDate
 ) {}

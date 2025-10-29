@@ -1,4 +1,4 @@
-package com.JohnBravos.mapper;
+package com.JohnBravos.bookhub_manager.mapper;
 
 import com.JohnBravos.bookhub_manager.dto.Request.CreateBookRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateBookRequest;

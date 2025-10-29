@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -33,10 +34,10 @@ public class Loan {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime loanDate;
+    private LocalDate loanDate;
 
     @Column(nullable = false)
-    private LocalDateTime dueDate;      // Προθεσμία επιστροφής
+    private LocalDate dueDate;      // Προθεσμία επιστροφής
 
     private LocalDateTime returnDate;   // Actual return time
 
@@ -46,7 +47,7 @@ public class Loan {
 
     // Στο Loan entity μπορούμε να προσθέσουμε:
     public boolean isOverdue() {
-        return LocalDateTime.now().isAfter(dueDate) && status == LoanStatus.ACTIVE;
+        return LocalDateTime.now().isAfter(dueDate.atStartOfDay()) && status == LoanStatus.ACTIVE;
     }
 
     public boolean isReturned() {
