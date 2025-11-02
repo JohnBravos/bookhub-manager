@@ -1,8 +1,10 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
+import com.JohnBravos.bookhub_manager.core.enums.BookStatus;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateBookRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateBookRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.BookResponse;
+import com.JohnBravos.bookhub_manager.model.Author;
 import com.JohnBravos.bookhub_manager.model.Book;
 import org.springframework.stereotype.Component;
 
@@ -14,25 +16,26 @@ public class BookMapper {
 
     private final AuthorMapper authorMapper;
 
-    public BookMapper(AuthorMapper authorMapper) {
+    public BookMapper(AuthorMapper authorMapper)
+    {
         this.authorMapper = authorMapper;
     }
 
-    /**
-     * Μετατροπή από CreateBookRequest -> Book
-     */
-    public Book toEntity(CreateBookRequest request) {
-        return Book.builder()
-                .title(request.title())
-                .isbn(request.isbn())
-                .publisher(request.publisher())
-                .publicationYear(request.publicationYear())
-                .publicationYear(request.publicationYear())
-                .genre(request.genre())
-                .description(request.description())
-                .totalCopies(request.totalCopies())
-                .build();
-    }
+//    public Book toEntity(CreateBookRequest request, List<Author> authors) {
+//        return Book.builder()
+//                .title(request.title())
+//                .isbn(request.isbn())
+//                .publisher(request.publisher())
+//                .publicationYear(request.publicationYear())
+//                .publicationYear(request.publicationYear())
+//                .genre(request.genre())
+//                .description(request.description())
+//                .totalCopies(request.totalCopies())
+//                .availableCopies(request.totalCopies())
+//                .status(request.totalCopies() > 0 ? BookStatus.AVAILABLE : BookStatus.BORROWED)
+//                .authors(authors)
+//                .build();
+//    }
 
     /**
      * Μετατροπή από Book -> BookResponse
