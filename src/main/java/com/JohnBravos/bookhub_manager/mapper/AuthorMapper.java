@@ -1,6 +1,7 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
 import com.JohnBravos.bookhub_manager.dto.Request.CreateAuthorRequest;
+import com.JohnBravos.bookhub_manager.dto.Request.UpdateAuthorRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.AuthorResponse;
 import com.JohnBravos.bookhub_manager.model.Author;
 import org.springframework.stereotype.Component;
@@ -11,14 +12,35 @@ import java.util.stream.Collectors;
 @Component
 public class AuthorMapper {
 
-    public Author toEntity(CreateAuthorRequest request) {
-        return Author.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .nationality(request.nationality())
-                .birthDate(request.birthDate())
-                .biography(request.biography())
-                .build();
+//    public Author toEntity(CreateAuthorRequest request) {
+//        return Author.builder()
+//                .firstName(request.firstName())
+//                .lastName(request.lastName())
+//                .nationality(request.nationality())
+//                .birthDate(request.birthDate())
+//                .biography(request.biography())
+//                .build();
+//    }
+
+    /**
+     * Ενημέρωση Author από UpdateAuthorRequest
+     */
+    public void updateEntity(UpdateAuthorRequest request, Author author) {
+        if (request.firstName() != null) {
+            author.setFirstName(request.firstName());
+        }
+        if (request.lastName() != null) {
+            author.setLastName(request.lastName());
+        }
+        if (request.nationality() != null) {
+            author.setNationality(request.nationality());
+        }
+        if (request.birthDate() != null) {
+            author.setBirthDate(request.birthDate());
+        }
+        if (request.biography() != null) {
+            author.setBiography(request.biography());
+        }
     }
 
     /**
@@ -49,6 +71,8 @@ public class AuthorMapper {
             return List.of();
         }
 
-        return authors.stream().map(this::toResponse).collect(Collectors.toList());
+        return authors.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 }
