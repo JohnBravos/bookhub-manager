@@ -1,9 +1,12 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
+import com.JohnBravos.bookhub_manager.core.enums.UserRole;
+import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
 import com.JohnBravos.bookhub_manager.model.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,17 +15,24 @@ import java.util.stream.Collectors;
 @Component
 public class UserMapper {
 
-    public User toEntity(CreateUserRequest request) {
-        return User.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .username(request.username())
-                .email(request.email())
-                .phoneNumber(request.phoneNumber())
-                .build();
-    }
+//    public User toEntity(CreateUserRequest request, PasswordEncoder passwordEncoder) {
+//        return User.builder()
+//                .firstName(request.firstName())
+//                .lastName(request.lastName())
+//                .username(request.username())
+//                .email(request.email())
+//                .password(passwordEncoder.encode(request.password()))
+//                .phoneNumber(request.phoneNumber())
+//                .role(UserRole.MEMBER)
+//                .status(UserStatus.ACTIVE)
+//                .build();
+//    }
 
     public UserResponse toResponse(User user) {
+        if (user == null) {
+            return null;
+        }
+
         return new UserResponse(
                 user.getId(),
                 user.getFirstName(),
