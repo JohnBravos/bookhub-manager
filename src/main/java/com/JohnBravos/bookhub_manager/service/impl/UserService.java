@@ -1,0 +1,175 @@
+package com.JohnBravos.bookhub_manager.service.impl;
+
+import com.JohnBravos.bookhub_manager.core.enums.UserRole;
+import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
+import com.JohnBravos.bookhub_manager.core.exceptions.custom.DuplicateEmailException;
+import com.JohnBravos.bookhub_manager.core.exceptions.custom.DuplicateUsernameException;
+import com.JohnBravos.bookhub_manager.core.exceptions.custom.UserNotFoundException;
+import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
+import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
+import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
+import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
+import com.JohnBravos.bookhub_manager.mapper.UserMapper;
+import com.JohnBravos.bookhub_manager.model.User;
+import com.JohnBravos.bookhub_manager.repository.UserRepository;
+import com.JohnBravos.bookhub_manager.service.IUserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class UserService implements IUserService {
+
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    @Transactional
+    public UserResponse registerUser(CreateUserRequest request) {
+        log.info("Attempting to register user with email: {}", request.email());
+
+        // Validation
+        if (!isEmailAvailable(request.email())) {
+            throw new DuplicateEmailException(request.email());
+        }
+
+        if (!isUsernameAvailable(request.username())) {
+            throw new DuplicateUsernameException(request.username());
+        }
+
+        // Create user entity
+        User user = User.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .username(request.username())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .phoneNumber(request.phoneNumber())
+                .build();
+
+        // ✅ Business Logic ΕΔΩ - ξεκάθαρο!
+        user.setRole(UserRole.MEMBER);
+        user.setStatus(UserStatus.ACTIVE);
+
+        User savedUser = userRepository.save(user);
+        log.info("User registered successfully with ID: {}", savedUser.getId());
+
+        return userMapper.toResponse(savedUser);
+    }
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        log.debug("Fetching user by ID: {}", id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        return userMapper.toResponse(user);
+    }
+
+    public UserProfileResponse getUserProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        return UserProfileResponse.builder()
+                .user(userMapper.toResponse(user))
+                .activeLoansCount(0)
+                .totalLoansCount(0)
+                .totalReservationsCount(0)
+                .booksReadCount(0)
+                .favoriteGenre("Unknown")
+                .averageRating(0.0)
+                .build();
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        log.debug("Fetching all users");
+        return userMapper.toResponseList(userRepository.findAll());
+    }
+
+    @Override
+    public List<UserResponse> getUsersByRole(UserRole role) {
+        log.debug("Fetching users by role: {}", role);
+        return userMapper.toResponseList(userRepository.findByRole(role));
+    }
+
+    public List<UserResponse> searchUsersByName(String name) {
+        log.debug("Searching users by name: {}", name);
+        return  userMapper.toResponseList(userRepository.findByNameContaining(name));
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateUser(Long userId, UpdateUserRequest request) {
+        log.info("Updating user with ID: {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        userMapper.updateEntity(request, user);
+        User updatedUser = userRepository.save(user);
+
+        log.info("User updated successfully with ID: {}", userId);
+        return userMapper.toResponse(updatedUser);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateUserStatus(Long userId, UserStatus newStatus) {
+        log.info("Updating status for user ID: {} to {}", userId, newStatus);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->new UserNotFoundException(userId));
+
+        user.setStatus(newStatus);
+        User updatedUser = userRepository.save(user);
+
+        log.info("User status updated successfully for user ID: {}", userId);
+        return userMapper.toResponse(updatedUser);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateUserRole(Long userId, UserRole newRole) {
+        log.info("Updating role for user ID: {} to {}", userId, newRole);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        user.setRole(newRole);
+        User updatedUser = userRepository.save(user);
+
+        log.info("User role updated successfully for user ID: {}", userId);
+        return userMapper.toResponse(updatedUser);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(Long userId) {
+        log.info("Deleting user with ID: {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        userRepository.delete(user);
+        log.info("User deleted successfully with ID: {}", userId);
+    }
+
+    @Override
+    public boolean userExists(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
+    @Override
+    public boolean isEmailAvailable(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean isUsernameAvailable(String username) {
+        return !userRepository.existsByUsername(username);
+    }
+}
