@@ -1,7 +1,10 @@
 package com.JohnBravos.bookhub_manager.dto.Response;
 
+import lombok.Builder;
+
 import java.util.List;
 
+@Builder
 public record BookDetailsResponse(
         BookResponse book,
 
