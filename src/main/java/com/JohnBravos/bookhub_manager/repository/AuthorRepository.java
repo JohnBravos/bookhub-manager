@@ -54,4 +54,8 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     // Authors by book ID
     @Query("SELECT a FROM Author a JOIN a.books b WHERE b.id = :bookId")
     List<Author> findByBookId(@Param("bookId") Long bookId);
+
+    @Query("SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END " +
+            "FROM Author a JOIN a.books b WHERE a.id = :authorId")
+    boolean hasBooks(@Param("authorId") Long authorId);
 }
