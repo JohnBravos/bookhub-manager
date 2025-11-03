@@ -1,6 +1,7 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
 import com.JohnBravos.bookhub_manager.dto.Request.CreateReservationRequest;
+import com.JohnBravos.bookhub_manager.dto.Request.UpdateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.ReservationResponse;
 import com.JohnBravos.bookhub_manager.model.Reservation;
 import org.springframework.stereotype.Component;
@@ -20,15 +21,15 @@ public class ReservationMapper {
         this.bookMapper = bookMapper;
     }
 
-    /**
-     * Μετατροπή από CreateReservationRequest -> Reservation
-     */
-    public Reservation toEntity(CreateReservationRequest request) {
-        return Reservation.builder()
-                .expiryDate(LocalDateTime.now().plusDays(7))    // Default 7 days expiry
-        // reservationDate, status θα τα ορίσουμε στο Service
-                .build();
-    }
+//    /**
+//     * Μετατροπή από CreateReservationRequest -> Reservation
+//     */
+//    public Reservation toEntity(CreateReservationRequest request) {
+//        return Reservation.builder()
+//                .expiryDate(LocalDateTime.now().plusDays(7))    // Default 7 days expiry
+//        // reservationDate, status θα τα ορίσουμε στο Service
+//                .build();
+//    }
 
     /**
      * Μετατροπή από Reservation -> ReservationResponse
@@ -47,6 +48,16 @@ public class ReservationMapper {
                 reservation.getStatus(),
                 0 // positionInQueue - θα το υπολογίσουμε στο Service
         );
+    }
+
+    public void updateEntity(UpdateReservationRequest request, Reservation reservation) {
+        if (request.bookId() != null) {
+            // Θα χρειαστούμε BookRepository για να βρούμε το νέο βιβλίο
+            // Αυτό θα γίνει στο Service
+        }
+        if (request.expiryDate() != null) {
+            reservation.setExpiryDate(request.expiryDate());
+        }
     }
 
     /**
