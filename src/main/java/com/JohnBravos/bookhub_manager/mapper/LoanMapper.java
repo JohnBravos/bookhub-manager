@@ -1,6 +1,7 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
 import com.JohnBravos.bookhub_manager.dto.Request.CreateLoanRequest;
+import com.JohnBravos.bookhub_manager.dto.Request.UpdateLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.LoanResponse;
 import com.JohnBravos.bookhub_manager.model.Loan;
 import org.springframework.stereotype.Component;
@@ -22,14 +23,25 @@ public class LoanMapper {
         this.bookMapper = bookMapper;
     }
 
+//    /**
+//     * Μετατροπή από CreateLoanRequest -> Loan
+//     */
+//    public Loan toEntity(CreateLoanRequest request) {
+//        return Loan.builder()
+//                .dueDate(LocalDate.from(request.dueDate()))
+//                // loanDate, returnDate, status θα τα ορίσουμε στο Service
+//                .build();
+//    }
+
     /**
-     * Μετατροπή από CreateLoanRequest -> Loan
+     * Ενημέρωση Loan από UpdateLoanRequest
      */
-    public Loan toEntity(CreateLoanRequest request) {
-        return Loan.builder()
-                .dueDate(LocalDate.from(request.dueDate()))
-                // loanDate, returnDate, status θα τα ορίσουμε στο Service
-                .build();
+    public void updateEntity(UpdateLoanRequest request, Loan loan) {
+        if (request.dueDate() != null) {
+            loan.setDueDate(request.dueDate());
+        }
+        // Σημείωση: Στα loans συνήθως αλλάζουμε μόνο το dueDate
+        // Το returnDate και status τα ορίζει το system
     }
 
     /**
