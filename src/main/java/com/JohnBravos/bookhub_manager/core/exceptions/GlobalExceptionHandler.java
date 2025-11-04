@@ -49,6 +49,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(ReservationNotAllowedException.class)
+    public ResponseEntity<ApiError> handleReservationNotAllowed(ReservationNotAllowedException ex, WebRequest request) {
+        log.warn("Reservation not allowed: {}", ex.getMessage());
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
     // Conflict Exceptions
 
     @ExceptionHandler({DuplicateEmailException.class, DuplicateUsernameException.class})
