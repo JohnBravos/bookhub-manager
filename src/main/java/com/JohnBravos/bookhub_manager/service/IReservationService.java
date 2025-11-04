@@ -21,6 +21,7 @@ public interface IReservationService {
     List<ReservationResponse> getActiveReservations();
     List<ReservationResponse> getExpiredReservations();
     List<ReservationResponse> getReservationsExpiringSoon();
+    List<ReservationResponse> getReservationQueueForBook(Long bookId);
 
     // UPDATE
     ReservationResponse updateReservation(Long reservationId, UpdateReservationRequest request);
