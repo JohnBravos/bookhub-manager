@@ -91,4 +91,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // Reservations ready to fulfill(book available again)
     @Query("SELECT r FROM Reservation r JOIN r.book b WHERE r.status = 'ACTIVE' AND b.availableCopies > 0")
     List<Reservation> findReservationsReadyForFulfillment();
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.book.id = :bookId AND r.status = 'ACTIVE'")
+    int countActiveReservationsByBook(@Param("bookId") Long bookId);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.book.id = :bookId AND r.status = 'ACTIVE' AND r.reservationDate < :reservationDate")
+    int findQueuePosition(@Param("bookId") Long bookId, @Param("reservationDate") LocalDateTime reservationDate);
 }
