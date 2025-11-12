@@ -1,32 +1,18 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
-import com.JohnBravos.bookhub_manager.core.enums.UserRole;
-import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
-import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
+import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
 import com.JohnBravos.bookhub_manager.model.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
-
-//    public User toEntity(CreateUserRequest request, PasswordEncoder passwordEncoder) {
-//        return User.builder()
-//                .firstName(request.firstName())
-//                .lastName(request.lastName())
-//                .username(request.username())
-//                .email(request.email())
-//                .password(passwordEncoder.encode(request.password()))
-//                .phoneNumber(request.phoneNumber())
-//                .role(UserRole.MEMBER)
-//                .status(UserStatus.ACTIVE)
-//                .build();
-//    }
 
     public UserResponse toResponse(User user) {
         if (user == null) {
@@ -48,8 +34,29 @@ public class UserMapper {
 
     }
 
+    public UserProfileResponse toProfileResponse(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        UserResponse userResponse = toResponse(user);
+
+        // ✅ TEMPORARY VALUES - θα τα βελτιώσουμε ΑΡΓΟΤΕΡΑ
+        return new UserProfileResponse(
+                userResponse,
+                0,  // activeLoansCount - temporary
+                0,  // totalLoansCount - temporary
+                0,  // totalReservationsCount - temporary
+                List.of(),  // currentLoans - temporary empty list
+                List.of(),  // currentReservations - temporary empty list
+                0,  // booksReadCount - temporary
+                "N/A",  // favoriteGenre - temporary
+                0.0  // averageRating - temporary
+        );
+    }
+
     public void updateEntity(UpdateUserRequest request, User user) {
-        if (request.firstName() !=  null) {
+        if (request.firstName() != null) {
             user.setFirstName(request.firstName());
         }
         if (request.lastName() != null) {
