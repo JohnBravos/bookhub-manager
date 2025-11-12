@@ -35,7 +35,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByBookId(Long bookId);
 
     // Active reservations by user ID
-    List<Reservation> findByUserIdAndStatus(Long userId, ReservationStatus status);
+//    List<Reservation> findByUserIdAndStatus(Long userId, ReservationStatus status);
 
     // Active reservations by book ID
     List<Reservation> findByBookIdAndStatus(Long bookId, ReservationStatus status);
@@ -97,4 +97,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.book.id = :bookId AND r.status = 'ACTIVE' AND r.reservationDate < :reservationDate")
     int findQueuePosition(@Param("bookId") Long bookId, @Param("reservationDate") LocalDateTime reservationDate);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.id = :userId")
+    int countByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.status = :status")
+    List<Reservation> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") ReservationStatus status);
 }
