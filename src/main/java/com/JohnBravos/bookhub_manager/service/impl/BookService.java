@@ -43,9 +43,12 @@ public class BookService implements IBookService {
         }
 
         // Validate authors exist
-        List<Author> authors = authorRepository.findAllById(request.authorIds());
-        if (authors.size() != request.authorIds().size()) {
-            throw new AuthorNotFoundException("One or more authors not found");
+        List<Author> authors = List.of();
+        if (request.authorIds() != null && !request.authorIds().isEmpty()) {
+            authors = authorRepository.findAllById(request.authorIds());
+            if (authors.size() != request.authorIds().size()) {
+                throw new AuthorNotFoundException("One or more authors not found");
+            }
         }
 
         // Create book entity
