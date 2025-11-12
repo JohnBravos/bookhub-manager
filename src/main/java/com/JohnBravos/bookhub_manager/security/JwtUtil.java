@@ -1,9 +1,6 @@
 package com.JohnBravos.bookhub_manager.security;
 
 
-import com.JohnBravos.bookhub_manager.core.enums.UserRole;
-import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
-import com.JohnBravos.bookhub_manager.model.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import io.jsonwebtoken.security.Keys;
@@ -46,7 +43,10 @@ public class JwtUtil {
             claims.put("userId", customUserDetails.getUser().getId());
             claims.put("role", customUserDetails.getUser().getRole().name());
         }
-        return createToken(claims, userDetails.getUsername());
+
+        String subject = userDetails.getUsername();
+
+        return createToken(claims, subject);
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -60,13 +60,10 @@ public class JwtUtil {
     }
 
     // Μέθοδος 2: Έλεγχος ΤΟΚΕΝ
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJwt(token);
-            return true;
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
@@ -110,52 +107,4 @@ public class JwtUtil {
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-
-//    // 🧪 TEMPORARY TEST METHOD (με debug)
-//    public void testJwtGeneration() {
-//        System.out.println("=== 🔍 TESTING JWT UTIL ===");
-//        System.out.println("✅ Secret loaded: " + (secret != null ? "YES" : "NO"));
-//        System.out.println("✅ Expiration: " + expiration + "ms");
-//
-//        try {
-//            // Δημιουργία test user
-//            User testUser = User.builder()
-//                    .id(1L)
-//                    .username("testuser")
-//                    .email("test@email.com")
-//                    .password("encodedpassword")
-//                    .firstName("Test")
-//                    .lastName("User")
-//                    .phoneNumber("1234567890")
-//                    .role(UserRole.MEMBER)
-//                    .status(UserStatus.ACTIVE)
-//                    .build();
-//
-//            CustomUserDetails userDetails = new CustomUserDetails(testUser);
-//
-//            // Δοκιμή δημιουργίας token
-//            String token = generateToken(userDetails);
-//            System.out.println("✅ Token generated: " + token.substring(0, 50) + "...");
-//
-//            // Δοκιμή επαλήθευσης token
-//            boolean isValid = validateToken(token);
-//            System.out.println("✅ Token valid: " + isValid);
-//
-//            // Δοκιμή εξαγωγής πληροφοριών
-//            String username = extractUsername(token);
-//            String role = extractRole(token);
-//            Long userId = extractUserId(token);
-//
-//            System.out.println("✅ Username extracted: " + username);
-//            System.out.println("✅ Role extracted: " + role);
-//            System.out.println("✅ User ID extracted: " + userId);
-//
-//            System.out.println("=== 🎉 TEST COMPLETED SUCCESSFULLY ===");
-//
-//        } catch (Exception e) {
-//            System.out.println("❌ TEST FAILED: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
-
 }
