@@ -31,9 +31,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException,
             IOException {
 
+        String path = request.getServletPath();
+
+        if (path.startsWith("/api/auth/")) {
+            // ✅ Μην ελέγχεις token στα public endpoints
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             // ΒΗΜΑ 1: ΕΞΑΓΩΓΗ ΤΟΚΕΝ ΑΠΟ ΤΟ HEADER
+            log.info("---- JWT Filter triggered for path: {} ----", request.getServletPath());
+
             final String authHeader = request.getHeader("Authorization");
+            log.info("Authorization header: {}", authHeader);
+
             String jwtToken = null;
             String username = null;
 
@@ -54,9 +66,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // ΒΗΜΑ 4: ΦΟΡΤΩΣΗ ΣΤΟΙΧΕΙΩΝ ΧΡΗΣΤΗ ΑΠΟ ΒΑΣΗ
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     log.debug("User details loader for: {}", username);
+                    log.info("Extracted username from token: {}", username);
+
 
                     // ΒΗΜΑ 5: ΕΛΕΓΧΟΣ ΕΓΚΥΡΟΤΗΤΑΣ ΤΟΚΕΝ
-                    if (jwtUtil.validateToken(jwtToken)) {
+                    if (jwtUtil.validateToken(jwtToken, userDetails)) {
                         log.debug("Token validated successfully for user: {}", username);
 
                         // ΒΗΜΑ 6: ΔΗΜΙΟΥΡΓΙΑ AUTHENTICATION OBJECT
@@ -66,15 +80,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                         null,
                                         userDetails.getAuthorities()
                                 );
-
                         // ΒΗΜΑ 7: ΠΡΟΣΘΗΚΗ ΛΕΠΤΟΜΕΡΕΙΩΝ ΑΙΤΗΣΗΣ
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                         // ΒΗΜΑ 8: ΟΡΙΣΜΟΣ AUTHENTICATION ΣΤΟ SECURITY CONTEXT
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                        log.debug("Authentication set in SecurityContext for user: {}", username);
+                        log.info("Authentication set in SecurityContext for user: {}", username);
                     } else {
                         log.warn("Invalid JWT token for user: {}", username);
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        return;
                     }
                 }
 
@@ -82,7 +97,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             log.error("Error processing JWT authentication: {}", e.getMessage());
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
+        filterChain.doFilter(request, response);
     }
 }
