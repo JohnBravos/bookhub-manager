@@ -9,14 +9,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -40,14 +37,27 @@ public class AuthController {
     // ENDPOINT 2: ΣΥΝΔΕΣΗ ΧΡΗΣΤΗ
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
-            @Valid @RequestBody LoginRequest request) {
+            @RequestBody LoginRequest request) {
 
         log.info("Login request received for user: {}", request.username());
 
         LoginResponse response = authenticationService.login(request);
 
+        if (response == null) {
+            log.error("❌ AuthenticationService.login() returned null for user: {}", request.username());
+        } else {
+            log.info("✅ LoginResponse created for user: {}", response.username());
+        }
+
         return ResponseEntity.ok(
                 ApiResponse.success(response, "Login successful")
         );
+    }
+
+    // VALIDATE TOKEN (Optional - for frontend token validation)
+    @GetMapping("/validate")
+    public ResponseEntity<ApiResponse<Void>> validateToken() {
+        log.info("Token validation request");
+        return ResponseEntity.ok(ApiResponse.success("Token is valid"));
     }
 }
