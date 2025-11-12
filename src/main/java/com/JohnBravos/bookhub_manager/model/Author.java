@@ -1,5 +1,6 @@
 package com.JohnBravos.bookhub_manager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,14 +24,17 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "firstname", nullable = false, length = 100)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(name = "lastname", nullable = false, length = 100)
     private String lastName;
 
+    @Column(length = 255)
     private String nationality;
     private LocalDate birthDate;
+
+    @Column(columnDefinition = "TEXT")
     private String biography;
 
     @CreationTimestamp
@@ -41,11 +45,17 @@ public class Author {
     private LocalDateTime updatedAt;
 
     // Ένας συγγραφέας μπορεί να έχει πολλά βιβλία
+    @JsonIgnore
     @ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<>();
 
 
     public String getFullName () {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public String toString() {
+        return "Author{id=" + id + ", name=" + getFullName() + "}";
     }
 }
