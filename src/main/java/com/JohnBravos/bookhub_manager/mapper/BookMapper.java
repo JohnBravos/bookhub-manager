@@ -1,10 +1,7 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
-import com.JohnBravos.bookhub_manager.core.enums.BookStatus;
-import com.JohnBravos.bookhub_manager.dto.Request.CreateBookRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateBookRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.BookResponse;
-import com.JohnBravos.bookhub_manager.model.Author;
 import com.JohnBravos.bookhub_manager.model.Book;
 import org.springframework.stereotype.Component;
 
@@ -21,22 +18,6 @@ public class BookMapper {
         this.authorMapper = authorMapper;
     }
 
-//    public Book toEntity(CreateBookRequest request, List<Author> authors) {
-//        return Book.builder()
-//                .title(request.title())
-//                .isbn(request.isbn())
-//                .publisher(request.publisher())
-//                .publicationYear(request.publicationYear())
-//                .publicationYear(request.publicationYear())
-//                .genre(request.genre())
-//                .description(request.description())
-//                .totalCopies(request.totalCopies())
-//                .availableCopies(request.totalCopies())
-//                .status(request.totalCopies() > 0 ? BookStatus.AVAILABLE : BookStatus.BORROWED)
-//                .authors(authors)
-//                .build();
-//    }
-
     /**
      * Μετατροπή από Book -> BookResponse
      */
@@ -44,6 +25,10 @@ public class BookMapper {
         if (book == null) {
             return null;
         }
+
+        List<?> authorResponses = (book.getAuthors() != null && !book.getAuthors().isEmpty())
+                ? authorMapper.toResponseList(book.getAuthors())
+                : List.of();
 
         return new BookResponse(
                 book.getId(),
