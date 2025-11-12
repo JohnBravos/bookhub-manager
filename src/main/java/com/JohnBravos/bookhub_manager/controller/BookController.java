@@ -7,7 +7,6 @@ import com.JohnBravos.bookhub_manager.dto.Response.ApiResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.BookDetailsResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.BookResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.SearchBookRequest;
-import com.JohnBravos.bookhub_manager.model.Book;
 import com.JohnBravos.bookhub_manager.service.IBookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("api/books")
+@RequestMapping("/books")
 @RequiredArgsConstructor
 public class BookController {
 
@@ -44,7 +43,7 @@ public class BookController {
     }
 
     // GET BOOK DETAILS (Public)
-    @GetMapping("/{id}details")
+    @GetMapping("/{id}/details")
     public ResponseEntity<ApiResponse<BookDetailsResponse>> getBookDetails(@PathVariable Long id) {
         log.info("Fetching detailed information for book ID: {}", id);
         BookDetailsResponse bookDetails = bookService.getBookDetails(id);
