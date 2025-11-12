@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -129,14 +130,21 @@ public class BookController {
     }
 
     // UPDATE BOOK COPIES (Librarian/Admin only)
-    @PatchMapping("/{id}/copies")
+    @PatchMapping("/{id}/updateCopies")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> updateBookCopies(
             @PathVariable Long id,
-            @RequestParam int newTotalCopies) {
-        log.info("Updating copies for book ID: {} to {}", id, newTotalCopies);
-        BookResponse book = bookService.updateBookCopies(id, newTotalCopies);
-        return ResponseEntity.ok(ApiResponse.success(book, "Book copies updated successfully"));
+            @RequestBody Map<String, Integer> updates) {
+
+        if (updates == null || !updates.containsKey("newTotalCopies")) {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.error("Missing field 'newTotalCopies' in request body")
+            );
+        }
+
+        int newTotalCopies = updates.get("newTotalCopies");
+        BookResponse updatedBook = bookService.updateBookCopies(id, newTotalCopies);
+        return ResponseEntity.ok(ApiResponse.success(updatedBook, "Book copies updated successfully"));
     }
 
     // DELETE BOOK (Admin only)
