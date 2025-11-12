@@ -35,7 +35,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     List<Loan> findByBookId(Long bookId);
 
     // Active loans by User ID
-    List<Loan> findByUserIdAndStatus(Long userId, LoanStatus status);
+//    List<Loan> findByUserIdAndStatus(Long userId, LoanStatus status);
 
     // Active loans by book ID
     List<Loan> findByBookIdAndStatus(Long bookId, LoanStatus status);
@@ -82,4 +82,13 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     // Statistics - average days time of loans
     @Query("SELECT AVG(DATEDIFF(l.returnDate, l.loanDate)) FROM Loan l WHERE l.returnDate IS NOT NULL")
     Double findAverageLoanDuration();
+
+    @Query("SELECT COUNT(l) FROM Loan l WHERE l.user.id = :userId AND l.status = :status")
+    int countByUserIdAndStatus(@Param("userId") Long userId, @Param("status") LoanStatus status);
+
+    @Query("SELECT COUNT(l) FROM Loan l WHERE l.user.id = :userId")
+    int countByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT l FROM Loan l WHERE l.user.id = :userId AND l.status = :status")
+    List<Loan> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") LoanStatus status);
 }
