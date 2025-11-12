@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("api/authors")
+@RequestMapping("/authors")
 @RequiredArgsConstructor
 public class AuthorController {
 
