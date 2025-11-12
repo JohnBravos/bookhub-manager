@@ -12,17 +12,20 @@ import java.util.List;
 public interface IUserService {
 
     // CREATE
-    UserResponse registerUser(CreateUserRequest request);
+    UserResponse registerUser(CreateUserRequest request); // For public registration
+    UserResponse createUser(CreateUserRequest request); // For admin user creation
 
     // READ
     UserResponse getUserById(Long id);
     UserProfileResponse getUserProfile(Long userId);
+    UserProfileResponse getCurrentUserProfile();
     List<UserResponse> getAllUsers();
     List<UserResponse> getUsersByRole(UserRole role);
     List<UserResponse> searchUsersByName(String name);
 
     // UPDATE
     UserResponse updateUser(Long userId, UpdateUserRequest request);
+    UserProfileResponse updateCurrentUserProfile(UpdateUserRequest request);
     UserResponse updateUserStatus(Long userId, UserStatus newStatus);
     UserResponse updateUserRole(Long userId, UserRole newRole);
 
@@ -33,4 +36,7 @@ public interface IUserService {
     boolean userExists(Long userId);
     boolean isEmailAvailable(String email);
     boolean isUsernameAvailable(String username);
+
+    // STATISTICS
+    Object getUserStatistics();
 }
