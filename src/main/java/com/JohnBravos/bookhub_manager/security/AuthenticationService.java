@@ -76,32 +76,44 @@ public class AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         log.info("Attempting to login user: {}", request.username());
 
-        // ΒΗΜΑ 1: ΕΛΕΓΧΟΣ ΤΑΥΤΟΤΗΤΑΣ ΜΕ ΤΟ SPRING SECURITY
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password()
-                )
-        );
+        try {
+            // ΒΗΜΑ 1: ΕΛΕΓΧΟΣ CREDENTIALS
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.username(),
+                            request.password()
+                    )
+            );
 
-        // ΒΗΜΑ 2: ΟΡΙΣΜΟΣ ΣΤΟ SECURITY CONTEXT
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.debug("Authentication successful for user: {}", request.username());
+            // ΒΗΜΑ 2: ΟΡΙΣΜΟΣ AUTHENTICATION CONTEXT
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("Authentication successful for user: {}", request.username());
 
-        // ΒΗΜΑ 3: ΔΗΜΙΟΥΡΓΙΑ JWT TOKEN
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String jwtToken = jwtUtil.generateToken(userDetails);
-        log.debug("Jwt token generated for user: {}", request.username());
+            // ΒΗΜΑ 3: ΔΗΜΙΟΥΡΓΙΑ JWT TOKEN
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        // ΒΗΜΑ 4: ΕΠΙΣΤΡΟΦΗ ΑΠΑΝΤΗΣΗΣ ΜΕ ΤΟΚΕΝ
-        return new LoginResponse(
-                jwtToken,
-                userDetails.getUser().getId(),
-                userDetails.getUsername(),
-                userDetails.getUser().getEmail(),
-                userDetails.getUser().getRole().name(),
-                "Login successful"
-        );
+            log.info("User logged in: {} ({})",
+                    userDetails.getUser().getUsername(),
+                    userDetails.getUser().getEmail());
+            log.info("JWT subject (email): {}", userDetails.getUser().getEmail());
+
+            String jwtToken = jwtUtil.generateToken(userDetails);
+            log.debug("Jwt token generated for user: {}", request.username());
+
+            // ΒΗΜΑ 4: ΕΠΙΣΤΡΟΦΗ ΑΠΑΝΤΗΣΗΣ ΜΕ ΤΟΚΕΝ
+            log.debug("Returning LoginResponse for user: {}", userDetails.getUser().getUsername());
+            return new LoginResponse(
+                    jwtToken,
+                    userDetails.getUser().getId(),
+                    userDetails.getUsername(),
+                    userDetails.getUser().getEmail(),
+                    userDetails.getUser().getRole().name(),
+                    "Login successful"
+            );
+        } catch (Exception e) {
+            log.error("❌ Login failed for user: {}. Reason: {}", request.username(), e.getMessage());
+            throw e;
+        }
         
     }
 }
