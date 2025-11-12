@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -101,6 +103,32 @@ public class GlobalExceptionHandler {
         log.debug("Field errors: {}", fieldErrors);
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
+
+    // Authentication exceptions
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex, WebRequest request) {
+        log.warn("Bad credentials: {}", ex.getMessage());
+        ApiError apiError = new ApiError(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid username or password",
+                "BAD_CREDENTIALS",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiError> handleUsernameNotFound(UsernameNotFoundException ex, WebRequest request) {
+        log.warn("Username not found: {}", ex.getMessage());
+        ApiError apiError = new ApiError(
+                HttpStatus.NOT_FOUND,
+                "User not found",
+                "USER_NOT_FOUND",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
 
     // Global exception handler
 
