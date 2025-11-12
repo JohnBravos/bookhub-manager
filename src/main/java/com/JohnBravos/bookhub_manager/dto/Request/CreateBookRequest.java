@@ -1,5 +1,6 @@
 package com.JohnBravos.bookhub_manager.dto.Request;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 
 import java.util.List;
@@ -35,10 +36,10 @@ public record CreateBookRequest(
         String description,
 
         @NotNull(message = "Total copies is required")
-                @Size(min = 1, message = "Total copies must be at least 1")
+        @Min(1)
+        @Max(999)
         Integer totalCopies,
 
-        @NotNull(message = "At least one author is required")
-                @Size(min = 1, message = "At least one author is required")
+        @Nullable
         List<Long> authorIds
 ) {}
