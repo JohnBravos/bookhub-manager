@@ -12,16 +12,6 @@ import java.util.stream.Collectors;
 @Component
 public class AuthorMapper {
 
-//    public Author toEntity(CreateAuthorRequest request) {
-//        return Author.builder()
-//                .firstName(request.firstName())
-//                .lastName(request.lastName())
-//                .nationality(request.nationality())
-//                .birthDate(request.birthDate())
-//                .biography(request.biography())
-//                .build();
-//    }
-
     /**
      * Ενημέρωση Author από UpdateAuthorRequest
      */
@@ -67,7 +57,7 @@ public class AuthorMapper {
      * Μετατροπή λίστας Authors -> AuthorResponses
      */
     public List<AuthorResponse> toResponseList(List<Author> authors) {
-        if (authors == null) {
+        if (authors == null || authors.isEmpty()) {
             return List.of();
         }
 
