@@ -15,11 +15,15 @@ import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -55,13 +59,38 @@ public class UserService implements IUserService {
                 .phoneNumber(request.phoneNumber())
                 .build();
 
-        // ✅ Business Logic ΕΔΩ - ξεκάθαρο!
         user.setRole(UserRole.MEMBER);
         user.setStatus(UserStatus.ACTIVE);
 
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
 
+        return userMapper.toResponse(savedUser);
+    }
+
+    @Override
+    public UserResponse createUser(CreateUserRequest request) {
+        log.info("Admin creating user: {}", request.email());
+
+        if (userRepository.existsByEmail(request.email())) {
+            throw new DuplicateEmailException(request.email());
+        }
+        if (userRepository.existsByUsername(request.username())) {
+            throw new DuplicateUsernameException(request.username());
+        }
+
+        User user = User.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .username(request.username())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .phoneNumber(request.phoneNumber())
+                .role(UserRole.MEMBER) // Default role
+                .status(UserStatus.ACTIVE)
+                .build();
+
+        User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
     }
 
@@ -73,6 +102,7 @@ public class UserService implements IUserService {
         return userMapper.toResponse(user);
     }
 
+    @Override
     public UserProfileResponse getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -86,6 +116,19 @@ public class UserService implements IUserService {
                 .favoriteGenre("Unknown")
                 .averageRating(0.0)
                 .build();
+    }
+
+    @Override
+    public UserProfileResponse getCurrentUserProfile() {
+        // Βρίσκω τον τρέχοντα χρήστη από το Security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        log.info("Current auth principal name = {}", email);
+
+        User user = userRepository.findByUsername(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+
+        return userMapper.toProfileResponse(user);
     }
 
     @Override
@@ -117,6 +160,20 @@ public class UserService implements IUserService {
 
         log.info("User updated successfully with ID: {}", userId);
         return userMapper.toResponse(updatedUser);
+    }
+
+    @Override
+    public UserProfileResponse updateCurrentUserProfile(UpdateUserRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        userMapper.updateEntity(request, user);
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toProfileResponse(updatedUser); // ✅ Και εδώ!
     }
 
     @Override
@@ -171,5 +228,25 @@ public class UserService implements IUserService {
     @Override
     public boolean isUsernameAvailable(String username) {
         return !userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Object getUserStatistics() {
+        // Βασικά στατιστικά
+        long totalUsers = userRepository.count();
+        long activeUsers = userRepository.countByStatus(UserStatus.ACTIVE);
+        long members = userRepository.countByRole(UserRole.MEMBER);
+        long librarians = userRepository.countByRole(UserRole.LIBRARIAN);
+        long admins = userRepository.countByRole(UserRole.ADMIN);
+
+        return Map.of(
+                "totalUsers", totalUsers,
+                "activeUsers", activeUsers,
+                "members", members,
+                "librarians", librarians,
+                "admins", admins,
+                "inactiveUsers", userRepository.countByStatus(UserStatus.INACTIVE),
+                "suspendedUsers", userRepository.countByStatus(UserStatus.SUSPENDED)
+        );
     }
 }
