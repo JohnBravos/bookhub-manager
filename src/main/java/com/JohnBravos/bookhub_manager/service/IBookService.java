@@ -6,6 +6,7 @@ import com.JohnBravos.bookhub_manager.dto.Request.UpdateBookRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.BookDetailsResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.BookResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.SearchBookRequest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public interface IBookService {
     BookResponse getBookById(Long id);
     BookDetailsResponse getBookDetails(Long bookId);
     List<BookResponse> getAllBooks();
+    Page<BookResponse> getAllBooks(int page, int size, String sort);
     List<BookResponse> getAvailableBooks();
     List<BookResponse> searchBooks(SearchBookRequest searchRequest);
     List<BookResponse> getBooksByAuthor(Long authorId);
