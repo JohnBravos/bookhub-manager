@@ -12,6 +12,7 @@ import com.JohnBravos.bookhub_manager.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,10 +50,12 @@ public class UserController {
     // ADMIN: GET ALL USERS
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<UserResponse>>>  getAllUsers() {
-        log.info("Admin fetching all users");
-        List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.ok(ApiResponse.success(users, "Users retrieved successfully"));
+    public ResponseEntity<ApiResponse<Page<UserResponse>>> getAllUsers(
+         @RequestParam(defaultValue = "0") int page,
+         @RequestParam(defaultValue = "10") int size,
+         @RequestParam(defaultValue = "id,asc") String sort
+    ) {
+             return ResponseEntity.ok(ApiResponse.success(userService.getAllUsers(page, size, sort)));
     }
 
     // GET USER BY ID (ADMIN/LIBRARIAN μόνο)
