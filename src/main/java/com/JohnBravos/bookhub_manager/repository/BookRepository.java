@@ -3,6 +3,8 @@ package com.JohnBravos.bookhub_manager.repository;
 import com.JohnBravos.bookhub_manager.core.enums.BookStatus;
 import com.JohnBravos.bookhub_manager.model.Author;
 import com.JohnBravos.bookhub_manager.model.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     // Books by title (contains)
     List<Book> findByTitleContainingIgnoreCase(String title);
+
+    Page<Book> findAll(Pageable pageable);
 
     // Books by author name
     @Query("SELECT b FROM Book b JOIN b.authors a WHERE a.firstName LIKE %:name% OR a.lastName LIKE %:name%")
