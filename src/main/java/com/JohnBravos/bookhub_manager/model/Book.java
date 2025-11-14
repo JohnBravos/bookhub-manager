@@ -59,7 +59,7 @@ public class Book {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "book_authors",
             joinColumns = @JoinColumn(name = "book_id"),
