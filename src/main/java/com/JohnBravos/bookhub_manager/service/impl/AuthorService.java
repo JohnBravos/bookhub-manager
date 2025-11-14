@@ -11,6 +11,10 @@ import com.JohnBravos.bookhub_manager.repository.AuthorRepository;
 import com.JohnBravos.bookhub_manager.service.IAuthorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +60,24 @@ public class AuthorService implements IAuthorService {
     public List<AuthorResponse> getAllAuthors() {
         log.debug("Fetching all authors");
         return authorMapper.toResponseList(authorRepository.findAll());
+    }
+
+    @Override
+    public Page<AuthorResponse> getAllAuthors(int page, int size, String sort) {
+
+        String[] sortParts = sort.split(",");
+        String sortField = sortParts[0];
+        Sort.Direction direction = Sort.Direction.ASC;
+
+        if (sortParts.length > 1 && sortParts[1].equalsIgnoreCase("desc")) {
+            direction = Sort.Direction.DESC;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<Author> pageResult = authorRepository.findAll(pageable);
+
+        return pageResult.map(authorMapper::toResponse);
     }
 
     @Override
