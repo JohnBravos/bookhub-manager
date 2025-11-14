@@ -3,6 +3,8 @@ package com.JohnBravos.bookhub_manager.repository;
 import com.JohnBravos.bookhub_manager.core.enums.UserRole;
 import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
 import com.JohnBravos.bookhub_manager.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +22,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Users by role
     List<User> findByRole(UserRole role);
+
+    Page<User> findAll(Pageable pageable);
 
     // Users by status
     List<User> findByStatus(UserStatus status);
