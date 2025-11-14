@@ -6,6 +6,7 @@ import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public interface IUserService {
     UserProfileResponse getUserProfile(Long userId);
     UserProfileResponse getCurrentUserProfile();
     List<UserResponse> getAllUsers();
+    Page<UserResponse> getAllUsers(int page, int size, String sort);
     List<UserResponse> getUsersByRole(UserRole role);
     List<UserResponse> searchUsersByName(String name);
 
