@@ -68,6 +68,10 @@ public class BookService implements IBookService {
                 .authors(authors)
                 .build();
 
+        for (Author a : authors) {
+            a.getBooks().add(book);
+        }
+
         // ✅ Business Logic ΕΔΩ - ξεκάθαρο!
         book.setAvailableCopies(request.totalCopies());
         book.setStatus(request.totalCopies() > 0 ? BookStatus.AVAILABLE : BookStatus.BORROWED);
