@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        if (path.startsWith("/api/auth/")) {
+        if (path.startsWith("/auth/")) {
             // ✅ Μην ελέγχεις token στα public endpoints
             filterChain.doFilter(request, response);
             return;
