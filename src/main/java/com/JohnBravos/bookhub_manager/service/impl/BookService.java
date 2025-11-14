@@ -19,6 +19,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 
 import java.util.List;
 
@@ -100,6 +105,26 @@ public class BookService implements IBookService {
         public List<BookResponse> getAllBooks() {
             log.debug("Fetching all books");
             return bookMapper.toResponseList(bookRepository.findAll());
+        }
+
+        @Override
+        public Page<BookResponse> getAllBooks(int page, int size, String sort) {
+
+            // format: "title,asc"  or  "createdAt,desc"
+            String[] sortParts = sort.split(",");
+
+            String sortField = sortParts[0];
+            Sort.Direction direction = Sort.Direction.ASC;
+
+                if (sortParts.length > 1 && sortParts[1].equalsIgnoreCase("desc")) {
+            direction = Sort.Direction.DESC;
+            }
+
+                Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+                Page<Book> booksPage = bookRepository.findAll(pageable);
+
+                return booksPage.map(bookMapper::toResponse);
         }
 
         @Override
