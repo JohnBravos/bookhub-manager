@@ -8,6 +8,7 @@ import com.JohnBravos.bookhub_manager.service.IAuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,10 +26,13 @@ public class AuthorController {
 
     // GET ALL AUTHORS
     @GetMapping
-    public ResponseEntity<ApiResponse<List<AuthorResponse>>> getAllAuthors() {
-        log.info("Fetching all authors");
-        List<AuthorResponse> authors = authorService.getAllAuthors();
-        return ResponseEntity.ok(ApiResponse.success(authors, "Authors retrieved successfully"));
+    public ResponseEntity<ApiResponse<Page<AuthorResponse>>> getAllAuthors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
+    ) {
+        Page<AuthorResponse> authorsPage = authorService.getAllAuthors(page, size, sort);
+        return ResponseEntity.ok(ApiResponse.success(authorsPage));
     }
 
     // GET AUTHOR BY ID (Public)
