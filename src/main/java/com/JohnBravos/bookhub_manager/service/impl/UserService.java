@@ -15,6 +15,10 @@ import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -135,6 +139,23 @@ public class UserService implements IUserService {
     public List<UserResponse> getAllUsers() {
         log.debug("Fetching all users");
         return userMapper.toResponseList(userRepository.findAll());
+    }
+
+    @Override
+    public Page<UserResponse> getAllUsers(int page, int size, String sort) {
+        String[] sortParts = sort.split(",");
+        String sortField = sortParts[0];
+        Sort.Direction direction = Sort.Direction.ASC;
+
+        if (sortParts.length > 1 && sortParts[1].equalsIgnoreCase("desc")) {
+            direction = Sort.Direction.DESC;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<User> users = userRepository.findAll(pageable);
+
+        return users.map(userMapper::toResponse);
     }
 
     @Override
