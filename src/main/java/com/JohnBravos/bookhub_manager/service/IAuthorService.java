@@ -3,6 +3,7 @@ package com.JohnBravos.bookhub_manager.service;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateAuthorRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateAuthorRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.AuthorResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public interface IAuthorService {
     // READ
     AuthorResponse getAuthorById(Long id);
     List<AuthorResponse> getAllAuthors();
+    Page<AuthorResponse> getAllAuthors(int page, int size, String sort);
     List<AuthorResponse> searchAuthorsByName(String name);
     List<AuthorResponse> getAuthorsWithBooks();
 
