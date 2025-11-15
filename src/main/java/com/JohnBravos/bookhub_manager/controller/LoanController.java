@@ -1,10 +1,16 @@
 package com.JohnBravos.bookhub_manager.controller;
 
+import com.JohnBravos.bookhub_manager.core.exceptions.custom.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.JohnBravos.bookhub_manager.model.User;
+import com.JohnBravos.bookhub_manager.core.enums.UserRole; // ή όπως λέγεται το enum σου
 import com.JohnBravos.bookhub_manager.dto.Request.CreateLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.ReturnLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.ApiResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.LoanResponse;
+import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.ILoanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +29,7 @@ import java.util.List;
 public class LoanController {
 
     private final ILoanService loanService;
+    private final UserRepository userRepository;
 
     // GET ALL LOANS (Librarian/Admin only)
     @GetMapping
@@ -46,7 +53,19 @@ public class LoanController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<LoanResponse>>> getLoansByUser(@PathVariable Long userId) {
         log.info("Fetching loans for user ID: {}", userId);
-        // TODO: Add security check to ensure users can only see their own loans
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        if (!(currentUser.getRole() == UserRole.ADMIN || currentUser.getRole() == UserRole.LIBRARIAN)) {
+            if (!currentUser.getId().equals(userId)) {
+                throw new AccessDeniedException("You can only access your own loans");
+            }
+        }
+
         List<LoanResponse> loans = loanService.getLoansByUser(userId);
         return ResponseEntity.ok(ApiResponse.success(loans, "User loans retrieved successfully"));
     }
