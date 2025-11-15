@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,12 +28,11 @@ public class Reservation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime reservationDate;
+    private LocalDate reservationDate;
 
     @Column(nullable = false)
-    private LocalDateTime expiryDate;       // Πότε λήγει η κράτηση
+    private LocalDate expiryDate;       // Πότε λήγει η κράτηση
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
