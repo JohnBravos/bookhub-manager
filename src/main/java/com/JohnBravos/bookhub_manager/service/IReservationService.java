@@ -36,5 +36,4 @@ public interface IReservationService {
     boolean hasActiveReservation(Long userId, Long bookId);
     int getQueuePosition(Long reservationId);
     int getActiveReservationsCountByUser(Long userId);
-
 }

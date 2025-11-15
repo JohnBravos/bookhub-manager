@@ -1,9 +1,5 @@
 package com.JohnBravos.bookhub_manager;
 
-import com.JohnBravos.bookhub_manager.dto.Request.LoginRequest;
-import com.JohnBravos.bookhub_manager.dto.Request.RegisterRequest;
-import com.JohnBravos.bookhub_manager.dto.Response.LoginResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.RegisterResponse;
 import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.security.AuthenticationService;
 import lombok.RequiredArgsConstructor;
