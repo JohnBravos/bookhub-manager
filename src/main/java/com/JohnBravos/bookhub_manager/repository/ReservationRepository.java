@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,15 +42,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     // Expired reservations (expiryDate < now and status = ACTIVE)
     @Query("SELECT r FROM Reservation r WHERE r.expiryDate < :currentDate AND r.status = 'ACTIVE'")
-    List<Reservation> findExpiredReservations(@Param("currentDate") LocalDateTime currentDate);
+    List<Reservation> findExpiredReservations(@Param("currentDate") LocalDate currentDate);
 
     // Reservations that expires soon (next 24 ώρες)
     @Query("SELECT r FROM Reservation r WHERE r.expiryDate BETWEEN :startDate AND :endDate AND r.status = 'ACTIVE'")
-    List<Reservation> findReservationsExpiringSoon(@Param("startDate") LocalDateTime startDate,
-                                                   @Param("endDate") LocalDateTime endDate);
+    List<Reservation> findReservationsExpiringSoon(@Param("startDate") LocalDate startDate,
+                                                   @Param("endDate") LocalDate endDate);
 
     // Reservations that happened in specific range of time
-    List<Reservation> findByReservationDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<Reservation> findByReservationDateBetween(LocalDate startDate, LocalDate endDate);
 
     // Active reservation of a user for a specific book
     @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.book.id = :bookId AND r.status = 'ACTIVE'")
@@ -82,8 +82,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     // reservations that fulfilled (done)
     List<Reservation> findByStatusAndReservationDateBetween(ReservationStatus status,
-                                                            LocalDateTime startDate,
-                                                            LocalDateTime endDate);
+                                                            LocalDate startDate,
+                                                            LocalDate endDate);
 
     // Most recent reservations
     List<Reservation> findTop10ByOrderByReservationDateDesc();
@@ -96,7 +96,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     int countActiveReservationsByBook(@Param("bookId") Long bookId);
 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.book.id = :bookId AND r.status = 'ACTIVE' AND r.reservationDate < :reservationDate")
-    int findQueuePosition(@Param("bookId") Long bookId, @Param("reservationDate") LocalDateTime reservationDate);
+    int findQueuePosition(@Param("bookId") Long bookId, @Param("reservationDate") LocalDate reservationDate);
 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.id = :userId")
     int countByUserId(@Param("userId") Long userId);
