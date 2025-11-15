@@ -3,7 +3,7 @@ package com.JohnBravos.bookhub_manager.dto.Request;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record UpdateReservationRequest(
 
@@ -11,7 +11,7 @@ public record UpdateReservationRequest(
 
         @NotNull(message = "Expiry date is required")
         @Future(message = "Expiry date must be in the future")
-        LocalDateTime expiryDate
+        LocalDate expiryDate
 
         // bookId, αλλαγή βιβλίου
         // expiryDate, παράταση κράτησης
