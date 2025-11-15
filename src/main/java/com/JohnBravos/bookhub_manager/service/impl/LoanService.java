@@ -50,6 +50,10 @@ public class LoanService implements ILoanService {
         // Business Rules Validation
         validateLoanCreation(user, book);
 
+        // reduce copies
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
+        bookRepository.save(book);
+
         // Manual Builder for CREATE
         Loan loan = Loan.builder()
                 .user(user)
@@ -84,16 +88,19 @@ public class LoanService implements ILoanService {
             );
         }
 
+        if (book.getAvailableCopies() <= 0) {
+            throw new BadRequestException("No available copies for this book");
+        }
+
         // Rule 2: User cannot have multiple active loans for the same book
         if (hasActiveLoan(user.getId(), book.getId())) {
             throw new LoanNotAllowedException("User has already an active loan for this book");
         }
 
         // Rule 3: User cannot have overdue loans
-        boolean hasOverdueLoans = !loanRepository.findOverdueLoans(LocalDateTime.now()).isEmpty();
-        if (hasOverdueLoans) {
-            throw new LoanNotAllowedException("User has overdue loans");
-        }
+        boolean hasOverdueLoans = loanRepository
+                .existsByUserIdAndDueDateBeforeAndStatus(user.getId(), LocalDate.now(), LoanStatus.ACTIVE);
+
 
         // Rule 4: Maximum active loans per user
         int activeLoansCount = getActiveLoansCountByUser(user.getId());
@@ -149,7 +156,7 @@ public class LoanService implements ILoanService {
     @Override
     public List<LoanResponse> getOverdueLoans() {
         log.debug("Fetching overdue loans");
-        return loanMapper.toResponseList(loanRepository.findOverdueLoans(LocalDateTime.now()));
+        return loanMapper.toResponseList(loanRepository.findOverdueLoans(LocalDate.now()));
     }
 
     public List<LoanResponse> getLoansDueSoon() {
@@ -191,7 +198,7 @@ public class LoanService implements ILoanService {
 
         // Update Book Availability
         Book book = loan.getBook();
-        book.returnCopy();
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
         bookRepository.save(book);
 
         Loan returnedLoan = loanRepository.save(loan);
