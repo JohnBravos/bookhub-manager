@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -51,11 +51,11 @@ public class ReservationService implements IReservationService {
         Reservation reservation = Reservation.builder()
                 .user(user)
                 .book(book)
-                .expiryDate(LocalDateTime.now().plusDays(7))
+                .expiryDate(LocalDate.now().plusDays(7))
                 .build();
 
         // Business Logic
-        reservation.setReservationDate(LocalDateTime.now());
+        reservation.setReservationDate(LocalDate.now());
         reservation.setStatus(ReservationStatus.ACTIVE);
 
         // Calculate queue position
@@ -136,13 +136,13 @@ public class ReservationService implements IReservationService {
     @Override
     public List<ReservationResponse> getExpiredReservations() {
         log.debug("Fetching expired reservations");
-        return reservationMapper.toResponseList(reservationRepository.findExpiredReservations(LocalDateTime.now()));
+        return reservationMapper.toResponseList(reservationRepository.findExpiredReservations(LocalDate.now()));
     }
 
     public List<ReservationResponse> getReservationsExpiringSoon() {
         log.debug("Fetching reservations expiring soon");
-        LocalDateTime startDate = LocalDateTime.now();
-        LocalDateTime endDate = LocalDateTime.now().plusDays(1); // Expiring in the next 24 hours
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now().plusDays(1); // Expiring in the next 24 hours
 
         return reservationMapper.toResponseList(reservationRepository.findReservationsExpiringSoon(startDate, endDate));
     }
