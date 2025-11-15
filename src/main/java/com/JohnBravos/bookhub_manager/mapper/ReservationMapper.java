@@ -1,12 +1,10 @@
 package com.JohnBravos.bookhub_manager.mapper;
 
-import com.JohnBravos.bookhub_manager.dto.Request.CreateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.ReservationResponse;
 import com.JohnBravos.bookhub_manager.model.Reservation;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,16 +18,6 @@ public class ReservationMapper {
         this.userMapper = userMapper;
         this.bookMapper = bookMapper;
     }
-
-//    /**
-//     * Μετατροπή από CreateReservationRequest -> Reservation
-//     */
-//    public Reservation toEntity(CreateReservationRequest request) {
-//        return Reservation.builder()
-//                .expiryDate(LocalDateTime.now().plusDays(7))    // Default 7 days expiry
-//        // reservationDate, status θα τα ορίσουμε στο Service
-//                .build();
-//    }
 
     /**
      * Μετατροπή από Reservation -> ReservationResponse
