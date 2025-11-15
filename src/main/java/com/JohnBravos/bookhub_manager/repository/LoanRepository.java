@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
 
     // Overdue loans (dueDate < τώρα και status = ACTIVE)
     @Query("SELECT l FROM Loan l WHERE l.dueDate < :currentDate AND l.status = 'ACTIVE'")
-    List<Loan> findOverdueLoans(@Param("currentDate") LocalDateTime currentDate);
+    List<Loan> findOverdueLoans(@Param("currentDate") LocalDate currentDate);
 
     // Loans that expires in specific date
     List<Loan> findByDueDate(LocalDateTime dueDate);
@@ -91,4 +92,6 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
 
     @Query("SELECT l FROM Loan l WHERE l.user.id = :userId AND l.status = :status")
     List<Loan> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") LoanStatus status);
+
+    boolean existsByUserIdAndDueDateBeforeAndStatus(Long id, LocalDate now, LoanStatus loanStatus);
 }
