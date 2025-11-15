@@ -2,14 +2,14 @@ package com.JohnBravos.bookhub_manager.dto.Response;
 
 import com.JohnBravos.bookhub_manager.core.enums.ReservationStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record ReservationResponse(
         Long id,
         BookResponse book,
         UserResponse user,
-        LocalDateTime reservationDate,
-        LocalDateTime expiryDate,
+        LocalDate reservationDate,
+        LocalDate expiryDate,
         ReservationStatus status,
         int positionInQueue
 ) {}
