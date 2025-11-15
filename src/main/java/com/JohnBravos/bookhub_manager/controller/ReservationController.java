@@ -1,9 +1,13 @@
 package com.JohnBravos.bookhub_manager.controller;
 
+import com.JohnBravos.bookhub_manager.core.enums.UserRole;
+import com.JohnBravos.bookhub_manager.core.exceptions.custom.AccessDeniedException;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.ApiResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.ReservationResponse;
+import com.JohnBravos.bookhub_manager.model.User;
+import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.IReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +28,7 @@ import java.util.List;
 public class ReservationController {
 
     private final IReservationService reservationService;
+    private final UserRepository userRepository;
 
     // GET ALL RESERVATIONS (Librarian/Admin only)
     @GetMapping
@@ -45,7 +52,19 @@ public class ReservationController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<ReservationResponse>>> getReservationsByUser(@PathVariable Long userId) {
         log.info("Fetching reservations for user ID: {}", userId);
-        // TODO: Add security check to ensure users can only see their own reservations
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        if (!(currentUser.getRole() == UserRole.ADMIN || currentUser.getRole() == UserRole.LIBRARIAN)) {
+            if (!currentUser.getId().equals(userId)) {
+                throw new AccessDeniedException("You can only access your own loans");
+            }
+        }
+
         List<ReservationResponse> reservations = reservationService.getReservationsByUser(userId);
         return ResponseEntity.ok(ApiResponse.success(reservations, "User reservations retrieved successfully"));
     }
@@ -93,7 +112,24 @@ public class ReservationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<ReservationResponse>> cancelReservation(@PathVariable Long id) {
         log.info("Cancelling reservation with ID: {}", id);
-        // TODO: Add security check to ensure users can only cancel their own reservations
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User currentUser = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        ReservationResponse reservationToCancel = reservationService.getReservationById(id);
+
+        boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
+        boolean isLibrarian = currentUser.getRole() == UserRole.LIBRARIAN;
+
+        if (!isAdmin && !isLibrarian) {
+            if (!reservationToCancel.user().id().equals(currentUser.getId())) {
+                throw new AccessDeniedException("You can only cancel your own reservations");
+            }
+        }
+
         ReservationResponse reservation = reservationService.cancelReservation(id);
         return ResponseEntity.ok(ApiResponse.success(reservation, "Reservation cancelled successfully"));
     }
