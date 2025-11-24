@@ -2,11 +2,15 @@ import { useState } from "react";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import backgroundImg from "../assets/library.jpg";
+import useAuth from "../hooks/useAuth";
 
 export default function Login() {
+  const { login } = useAuth();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -21,8 +25,12 @@ export default function Login() {
 
       console.log("LOGIN OK:", res.data);
 
-      // redirect here
-      navigate("/");
+       const { token, userId, username: uname, role, email } = res.data.data;
+       login({ 
+        id: userId, username: uname, role: role, email: email }, token);
+       setTimeout(() => {
+        navigate("/");
+      }, 10);
 
     } catch (err) {
       console.error(err);
@@ -84,6 +92,12 @@ export default function Login() {
             Login
           </button>
         </form>
+
+        <p className="text-center text-gray-200 mt-4">
+          Dont have an account?{" "}
+          <a href="/register" className="text-blue-300 hover:underline">Register</a>
+        </p>
+
       </div>
     </div>
   );
