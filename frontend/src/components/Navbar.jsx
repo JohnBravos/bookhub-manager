@@ -22,6 +22,11 @@ export default function Navbar() {
 
         <ul className="flex gap-6 items-center font-medium">
           <li>
+            <Link to="/" className="hover:text-[#c9a66b] transition">
+              Dashboard
+            </Link>
+          </li>
+          <li>
             <Link to="/books" className="hover:text-[#c9a66b] transition">
               Books
             </Link>
