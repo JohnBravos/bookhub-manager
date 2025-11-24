@@ -5,28 +5,46 @@ import Books from "./pages/Books";
 import MyLoans from "./pages/MyLoans";
 import Layout from "./components/Layout";
 import MyReservations from "./pages/MyReservations";
-import Dashboard from "./pages/Dashboard";
+import MemberDashboard from "./pages/MemberDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";     // <-- IMPORT
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <AuthProvider>   {/* <-- ΠΡΟΣΘΗΚΗ */}
+      <BrowserRouter>
+        <Routes>
 
-        <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="books" element={<Books />} />
-          <Route path="my-loans" element={<MyLoans />} />
-          <Route path="my-reservations" element={<MyReservations />} />
-        </Route>
+          <Route element={<Layout />}>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <MemberDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+            <Route
+              path="/member/dashboard"
+              element={
+                <ProtectedRoute>
+                  <MemberDashboard />
+                </ProtectedRoute>
+              }
+            />
 
+            <Route path="books" element={<Books />} />
+            <Route path="my-loans" element={<MyLoans />} />
+            <Route path="my-reservations" element={<MyReservations />} />
+          </Route>
 
-      </Routes>
-    </BrowserRouter>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
 export default App;
-
