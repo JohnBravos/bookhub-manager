@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAllBooks, borrowBook } from "../api/books";
 import useAuth from "../hooks/useAuth";
 
 export default function Books() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [search, setSearch] = useState("");
@@ -126,16 +128,22 @@ export default function Books() {
           {filteredBooks.map((book) => (
             <div
               key={book.id}
-              className="bg-white border border-[#e8dcc7] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition"
+              className="bg-white border border-[#e8dcc7] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition flex flex-col"
             >
-              {/* Book Cover Placeholder */}
-              <div className="bg-gradient-to-br from-[#8b5e34] to-[#6b4629] h-48 flex items-center justify-center text-white text-4xl">
+              {/* Book Cover Placeholder - Clickable */}
+              <div
+                onClick={() => navigate(`/books/${book.id}`)}
+                className="bg-gradient-to-br from-[#8b5e34] to-[#6b4629] h-48 flex items-center justify-center text-white text-4xl cursor-pointer hover:opacity-90 transition"
+              >
                 📚
               </div>
 
               {/* Book Info */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#3d2c1e] mb-2 line-clamp-2">
+              <div className="p-6 flex-1 flex flex-col">
+                <h3
+                  onClick={() => navigate(`/books/${book.id}`)}
+                  className="text-xl font-bold text-[#3d2c1e] mb-2 line-clamp-2 cursor-pointer hover:text-[#8b5e34] transition"
+                >
                   {book.title}
                 </h3>
 
@@ -169,22 +177,30 @@ export default function Books() {
                   </div>
                 </div>
 
-                {/* Borrow Button */}
-                <button
-                  onClick={() => handleBorrow(book.id)}
-                  disabled={book.status !== "AVAILABLE" || borrowing === book.id}
-                  className={`w-full py-2 rounded-lg font-semibold transition ${
-                    book.status === "AVAILABLE"
-                      ? "bg-[#8b5e34] text-white hover:bg-[#704b29] cursor-pointer"
-                      : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  } ${borrowing === book.id ? "opacity-50" : ""}`}
-                >
-                  {borrowing === book.id
-                    ? "Borrowing..."
-                    : book.status === "AVAILABLE"
-                    ? "Borrow Book"
-                    : "Unavailable"}
-                </button>
+                {/* Button Container */}
+                <div className="flex gap-2 mt-auto">
+                  <button
+                    onClick={() => handleBorrow(book.id)}
+                    disabled={book.status !== "AVAILABLE" || borrowing === book.id}
+                    className={`flex-1 py-2 rounded-lg font-semibold transition ${
+                      book.status === "AVAILABLE"
+                        ? "bg-[#8b5e34] text-white hover:bg-[#704b29] cursor-pointer"
+                        : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    } ${borrowing === book.id ? "opacity-50" : ""}`}
+                  >
+                    {borrowing === book.id
+                      ? "Borrowing..."
+                      : book.status === "AVAILABLE"
+                      ? "Borrow"
+                      : "Unavailable"}
+                  </button>
+                  <button
+                    onClick={() => navigate(`/books/${book.id}`)}
+                    className="flex-1 py-2 rounded-lg font-semibold bg-[#f0e6d2] text-[#3d2c1e] hover:bg-[#e8dcc7] transition"
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
             </div>
           ))}

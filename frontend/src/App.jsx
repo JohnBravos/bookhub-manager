@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Books from "./pages/Books";
+import BookDetails from "./pages/BookDetails";
 import MyLoans from "./pages/MyLoans";
 import Layout from "./components/Layout";
 import MyReservations from "./pages/MyReservations";
@@ -60,6 +61,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Books />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="books/:bookId"
+              element={
+                <ProtectedRoute>
+                  <BookDetails />
                 </ProtectedRoute>
               }
             />
