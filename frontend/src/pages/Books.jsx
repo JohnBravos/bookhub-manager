@@ -81,7 +81,7 @@ export default function Books() {
   }
 
   return (
-    <div className="bg-[#fdf8ee] p-8 min-h-screen">
+    <div className="bg-[#fdf8ee] p-8 h-full">
       {/* Header */}
       <h1 className="text-4xl font-extrabold text-[#3d2c1e] mb-2">
         Browse Books
