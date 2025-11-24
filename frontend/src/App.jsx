@@ -34,9 +34,30 @@ function App() {
               }
             />
 
-            <Route path="books" element={<Books />} />
-            <Route path="my-loans" element={<MyLoans />} />
-            <Route path="my-reservations" element={<MyReservations />} />
+            <Route
+              path="books"
+              element={
+                <ProtectedRoute>
+                  <Books />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="my-loans"
+              element={
+                <ProtectedRoute>
+                  <MyLoans />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="my-reservations"
+              element={
+                <ProtectedRoute>
+                  <MyReservations />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           <Route path="/login" element={<Login />} />
