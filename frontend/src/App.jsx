@@ -5,13 +5,16 @@ import Books from "./pages/Books";
 import MyLoans from "./pages/MyLoans";
 import Layout from "./components/Layout";
 import MyReservations from "./pages/MyReservations";
+import RoleDashboard from "./pages/RoleDashboard";
 import MemberDashboard from "./pages/MemberDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import LibrarianDashboard from "./pages/LibrarianDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./context/AuthContext";     // <-- IMPORT
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <AuthProvider>   {/* <-- ΠΡΟΣΘΗΚΗ */}
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
 
@@ -20,7 +23,7 @@ function App() {
               path="/"
               element={
                 <ProtectedRoute>
-                  <MemberDashboard />
+                  <RoleDashboard />
                 </ProtectedRoute>
               }
             />
@@ -30,6 +33,24 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MemberDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/librarian/dashboard"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianDashboard />
                 </ProtectedRoute>
               }
             />
