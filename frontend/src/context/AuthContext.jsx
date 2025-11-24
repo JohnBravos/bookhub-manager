@@ -1,39 +1,37 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 export function AuthProvider({children}) {
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
-    const [loading, setLoading] = useState(null);
-
-    // Φόρτωσε από localStorage όταν ανοίγει η εφαρμογή
-    useEffect(() => {
+    const [authState, setAuthState] = useState(() => {
         const savedToken = localStorage.getItem("token");
         const savedUser = localStorage.getItem("user");
 
         if (savedToken && savedUser) {
-            setToken(savedToken);
             try {
-                setUser(JSON.parse(savedUser));
+                return {
+                    user: JSON.parse(savedUser),
+                    token: savedToken,
+                    loading: false
+                };
             } catch {
-                setUser(null);
+                return { user: null, token: null, loading: false };
             }
         }
 
-        setLoading(false);
-    }, []);
+        return { user: null, token: null, loading: false };
+    });
+
+    const { user, token, loading } = authState;
 
     const login = (userData, jwtToken) => {
-        setUser(userData);
-        setToken(jwtToken);
+        setAuthState({ user: userData, token: jwtToken, loading: false });
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("user", JSON.stringify(userData));
     };
 
     const logout = () => {
-        setUser(null);
-        setToken(null);
+        setAuthState({ user: null, token: null, loading: false });
         localStorage.removeItem("token");
         localStorage.removeItem("user");
     };
@@ -42,3 +40,5 @@ export function AuthProvider({children}) {
 
       return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
+export { AuthContext };
