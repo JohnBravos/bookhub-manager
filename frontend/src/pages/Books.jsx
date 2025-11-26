@@ -13,19 +13,24 @@ export default function Books() {
   const [error, setError] = useState("");
   const [borrowing, setBorrowing] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const res = await getAllBooks();
+      const res = await getAllBooks(page, 9);
       // Handle paginated response
-      const bookData = res.data.data?.content || res.data.data || [];
+      const data = res.data.data;
+      const bookData = data?.content || data || [];
       setBooks(bookData);
       setFilteredBooks(bookData);
+      setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
       console.error("Error fetching books:", err);
@@ -204,6 +209,43 @@ export default function Books() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center gap-4">
+          <button
+            onClick={() => setPage(Math.max(0, page - 1))}
+            disabled={page === 0}
+            className="px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] disabled:bg-gray-300 transition"
+          >
+            Previous
+          </button>
+
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className={`px-3 py-2 rounded-lg font-semibold transition ${
+                  page === i
+                    ? "bg-[#8b5e34] text-white"
+                    : "bg-[#f0e6d2] text-[#3d2c1e] hover:bg-[#e8dcc7]"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+            disabled={page === totalPages - 1}
+            className="px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] disabled:bg-gray-300 transition"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

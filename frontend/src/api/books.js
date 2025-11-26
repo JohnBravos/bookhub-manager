@@ -1,7 +1,7 @@
 import api from "./axios";
 
-export const getAllBooks = async (params = {}) => {
-  return api.get("/books", { params });
+export const getAllBooks = async (page = 0, size = 10) => {
+  return api.get("/books", { params: { page, size } });
 };
 
 export const getBookById = async (bookId) => {

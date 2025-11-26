@@ -8,16 +8,21 @@ export default function MyLoans() {
   const [actionLoading, setActionLoading] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [filter, setFilter] = useState("all"); // all, active, overdue
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     fetchLoans();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, filter]);
 
   const fetchLoans = async () => {
     try {
       setLoading(true);
-      const res = await getMyLoans();
-      setLoans(res.data.data || []);
+      const res = await getMyLoans(page, 10);
+      const data = res.data.data;
+      setLoans(data?.content || data || []);
+      setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
       console.error("Error fetching loans:", err);
@@ -232,6 +237,43 @@ export default function MyLoans() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center gap-4">
+          <button
+            onClick={() => setPage(Math.max(0, page - 1))}
+            disabled={page === 0}
+            className="px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] disabled:bg-gray-300 transition"
+          >
+            Previous
+          </button>
+
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className={`px-3 py-2 rounded-lg font-semibold transition ${
+                  page === i
+                    ? "bg-[#8b5e34] text-white"
+                    : "bg-[#f0e6d2] text-[#3d2c1e] hover:bg-[#e8dcc7]"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+            disabled={page === totalPages - 1}
+            className="px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] disabled:bg-gray-300 transition"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>
