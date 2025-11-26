@@ -6,11 +6,21 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  const adminLinks = [
+    { label: "Users", path: "/admin/users" },
+    { label: "Books", path: "/admin/books" },
+    { label: "Authors", path: "/admin/authors" },
+    { label: "Loans", path: "/admin/loans" },
+    { label: "Reservations", path: "/admin/reservations" },
+    { label: "Settings", path: "/admin/settings" },
+  ];
 
   return (
     <nav className="bg-[#3d2c1e] text-[#fdf8ee] py-4 shadow-lg">
@@ -41,6 +51,38 @@ export default function Navbar() {
               Reservations
             </Link>
           </li>
+
+          {/* Admin Menu - Only show for ADMIN role */}
+          {user?.role === "ADMIN" && (
+            <li className="relative">
+              <button
+                onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#8b5e34] hover:bg-[#704b29] transition text-sm"
+              >
+                <span>⚙️</span>
+                <span>Admin</span>
+                <span className="text-xs">{isAdminMenuOpen ? "▲" : "▼"}</span>
+              </button>
+
+              {/* Admin Dropdown */}
+              {isAdminMenuOpen && (
+                <div className="absolute left-0 mt-2 w-48 bg-[#2a1f16] rounded-lg shadow-xl z-10">
+                  <div className="py-2">
+                    {adminLinks.map((link) => (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        onClick={() => setIsAdminMenuOpen(false)}
+                        className="block px-4 py-2 hover:bg-[#3d2c1e] transition text-sm"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </li>
+          )}
 
           {/* User Menu */}
           <li className="relative">

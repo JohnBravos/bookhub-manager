@@ -156,9 +156,15 @@ export default function Books() {
                   {book.author?.name || "Unknown Author"}
                 </p>
 
-                <p className="text-sm text-[#5a4636] mb-3">
-                  ISBN: {book.isbn}
+                <p className="text-sm text-[#5a4636] mb-1">
+                  ISBN: {book.isbn || "N/A"}
                 </p>
+
+                {/* Category and Published Year */}
+                <div className="flex justify-between text-sm text-[#5a4636] mb-3">
+                  <span>Category: <span className="font-semibold">{book.genre || "General"}</span></span>
+                  <span>Published: <span className="font-semibold">{book.publicationYear || "N/A"}</span></span>
+                </div>
 
                 {/* Book Details */}
                 <div className="mb-4 p-3 bg-[#fdf8ee] rounded-lg">

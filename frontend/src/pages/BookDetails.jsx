@@ -137,26 +137,24 @@ export default function BookDetails() {
             <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-[#fdf8ee] rounded-lg">
               <div>
                 <p className="text-xs text-[#5a4636] uppercase mb-1">ISBN</p>
-                <p className="font-semibold text-[#3d2c1e]">{book.isbn}</p>
+                <p className="font-semibold text-[#3d2c1e]">{book.isbn || "N/A"}</p>
               </div>
               <div>
                 <p className="text-xs text-[#5a4636] uppercase mb-1">Published</p>
                 <p className="font-semibold text-[#3d2c1e]">
-                  {book.publishedDate
-                    ? new Date(book.publishedDate).getFullYear()
-                    : "N/A"}
+                  {book.publicationYear || "N/A"}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-[#5a4636] uppercase mb-1">Category</p>
                 <p className="font-semibold text-[#3d2c1e]">
-                  {book.category || "General"}
+                  {book.genre || "General"}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-[#5a4636] uppercase mb-1">Language</p>
+                <p className="text-xs text-[#5a4636] uppercase mb-1">Publisher</p>
                 <p className="font-semibold text-[#3d2c1e]">
-                  {book.language || "English"}
+                  {book.publisher || "N/A"}
                 </p>
               </div>
             </div>
@@ -201,11 +199,18 @@ export default function BookDetails() {
         {book.publisher && (
           <div className="border-t border-[#e8dcc7] p-8 bg-[#fdf8ee]">
             <h2 className="text-lg font-bold text-[#3d2c1e] mb-3">
-              Publisher Information
+              Additional Information
             </h2>
-            <p className="text-[#5a4636]">
-              <span className="font-semibold">Publisher:</span> {book.publisher}
-            </p>
+            <div className="space-y-2">
+              <p className="text-[#5a4636]">
+                <span className="font-semibold">Publisher:</span> {book.publisher}
+              </p>
+              {book.description && (
+                <p className="text-[#5a4636] text-sm">
+                  <span className="font-semibold">Description:</span> {book.description}
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -3,7 +3,18 @@ import { Outlet, useLocation } from "react-router-dom";
 
 export default function Layout() {
   const location = useLocation();
-  const isFullscreenPage = location.pathname === "/" || location.pathname === "/member-dashboard" || location.pathname === "/books" || location.pathname === "/my-loans" || location.pathname === "/my-reservations";
+  const isFullscreenPage = 
+    location.pathname === "/" ||
+    location.pathname === "/member-dashboard" ||
+    location.pathname === "/books" ||
+    location.pathname === "/my-loans" ||
+    location.pathname === "/my-reservations" ||
+    location.pathname === "/admin/users" ||
+    location.pathname === "/admin/books" ||
+    location.pathname === "/admin/authors" ||
+    location.pathname === "/admin/loans" ||
+    location.pathname === "/admin/reservations" ||
+    location.pathname === "/admin/settings";
 
   return (
     <>
