@@ -6,6 +6,7 @@ import BookDetails from "./pages/BookDetails";
 import MyLoans from "./pages/MyLoans";
 import Layout from "./components/Layout";
 import MyReservations from "./pages/MyReservations";
+import Profile from "./pages/Profile";
 import RoleDashboard from "./pages/RoleDashboard";
 import MemberDashboard from "./pages/MemberDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -85,6 +86,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MyReservations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
