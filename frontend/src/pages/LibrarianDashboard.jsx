@@ -20,13 +20,14 @@ export default function LibrarianDashboard() {
     try {
       setLoading(true);
       const booksRes = await api.get("/books?size=1");
+      const availableBooksRes = await api.get("/books?status=AVAILABLE&size=1");
       const activeLoansRes = await api.get("/loans/active?size=1");
       const overdueRes = await api.get("/loans/overdue?size=1");
       const reservationsRes = await api.get("/reservations/active?size=1");
 
       setStats({
         totalBooks: booksRes.data.data?.totalElements || 0,
-        availableBooks: booksRes.data.data?.content?.filter((b) => b.status === "AVAILABLE").length || 0,
+        availableBooks: availableBooksRes.data.data?.totalElements || 0,
         activeLoans: activeLoansRes.data.data?.totalElements || 0,
         overdueLoans: overdueRes.data.data?.totalElements || 0,
         pendingReservations: reservationsRes.data.data?.totalElements || 0

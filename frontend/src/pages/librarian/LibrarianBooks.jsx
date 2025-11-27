@@ -75,7 +75,7 @@ export default function LibrarianBooks() {
                       {book.title}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
-                      {book.author?.firstName} {book.author?.lastName}
+                      {book.authors?.map((author) => `${author.firstName} ${author.lastName}`).join(", ") || (book.author?.firstName ? `${book.author.firstName} ${book.author.lastName}` : "Unknown")}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       <span className="px-3 py-1 rounded-full bg-[#f0e6d2] text-[#3d2c1e] text-sm">
