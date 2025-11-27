@@ -43,7 +43,7 @@ export default function LibrarianOverdueLoans() {
   }
 
   return (
-    <div className="bg-[#fdf8ee] p-8 min-h-screen">
+    <div className="bg-[#fdf8ee] p-6 h-screen overflow-y-auto">
       <h1 className="text-3xl font-bold text-[#3d2c1e] mb-2">Overdue Loans</h1>
       <p className="text-[#5a4636] mb-8">View and manage overdue loans</p>
 
