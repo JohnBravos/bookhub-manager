@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserStatistics } from "../../api/users";
+import { getAllUsers } from "../../api/admin";
 
 export default function LibrarianReports() {
   const [stats, setStats] = useState(null);
@@ -13,8 +13,46 @@ export default function LibrarianReports() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const res = await getUserStatistics();
-      setStats(res.data.data);
+      // Fetch all users and calculate statistics on the frontend
+      let allUsers = [];
+      let page = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const res = await getAllUsers(page, 50);
+        const data = res.data.data;
+        const content = data?.content || [];
+        
+        if (content.length === 0) {
+          hasMore = false;
+        } else {
+          allUsers = [...allUsers, ...content];
+          page++;
+          
+          if (page >= (data?.totalPages || 1)) {
+            hasMore = false;
+          }
+        }
+      }
+
+      // Calculate statistics
+      const totalUsers = allUsers.length;
+      const activeUsers = allUsers.filter(u => u.status === "ACTIVE").length;
+      const inactiveUsers = allUsers.filter(u => u.status === "INACTIVE").length;
+      const suspendedUsers = allUsers.filter(u => u.status === "SUSPENDED").length;
+      const members = allUsers.filter(u => u.role === "MEMBER").length;
+      const librarians = allUsers.filter(u => u.role === "LIBRARIAN").length;
+      const admins = allUsers.filter(u => u.role === "ADMIN").length;
+
+      setStats({
+        totalUsers,
+        activeUsers,
+        inactiveUsers,
+        suspendedUsers,
+        members,
+        librarians,
+        admins
+      });
       setError("");
     } catch (err) {
       console.error("Error fetching statistics:", err);

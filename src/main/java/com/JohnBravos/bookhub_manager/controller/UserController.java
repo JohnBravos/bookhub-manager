@@ -110,9 +110,9 @@ public class UserController {
 
     // 📈 GET USERS STATISTICS (Admin μόνο)
     @GetMapping("/stats")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<ApiResponse<Object>> getUserStatistics() {
-        log.info("Admin fetching user statistics");
+        log.info("Admin and Librarian fetching user statistics");
         Object stats = userService.getUserStatistics();
         return ResponseEntity.ok(ApiResponse.success(stats, "User statistics retrieved successfully"));
     }
