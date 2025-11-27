@@ -39,13 +39,8 @@ export default function LibrarianMembers() {
         }
       }
 
-      // Filter out ADMIN users - only show MEMBER and LIBRARIAN roles
-      const filteredMembers = fetchedMembers.filter(user => 
-        user.role !== "ADMIN"
-      );
-      
-      setAllMembers(filteredMembers);
-      setMembers(filteredMembers);
+      setAllMembers(fetchedMembers);
+      setMembers(fetchedMembers);
       setError("");
     } catch (err) {
       console.error("Error fetching members:", err);
@@ -113,13 +108,14 @@ export default function LibrarianMembers() {
                 <th className="px-6 py-4 text-left">Email</th>
                 <th className="px-6 py-4 text-left">Name</th>
                 <th className="px-6 py-4 text-left">Phone</th>
+                <th className="px-6 py-4 text-left">Role</th>
                 <th className="px-6 py-4 text-left">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e8dcc7]">
               {members.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-[#5a4636]">
+                  <td colSpan="6" className="px-6 py-8 text-center text-[#5a4636]">
                     No members found
                   </td>
                 </tr>
@@ -135,6 +131,19 @@ export default function LibrarianMembers() {
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {member.phoneNumber || "N/A"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full font-semibold text-sm ${
+                          member.role === "ADMIN"
+                            ? "bg-red-100 text-red-700"
+                            : member.role === "LIBRARIAN"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {member.role}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
