@@ -81,39 +81,39 @@ export default function LibrarianDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
           { 
-            title: "Manage Books", 
-            description: "Add new books or update existing inventory",
-            link: "/librarian/books",
-            icon: "📚",
-            color: "border-l-blue-500"
-          },
-          { 
             title: "Process Loans", 
             description: "View and manage active loans",
             link: "/librarian/loans",
-            icon: "🔄",
-            color: "border-l-purple-500"
+            icon: "📋",
+            color: "border-l-blue-500"
           },
           { 
             title: "Handle Reservations", 
             description: "Manage book reservations and fulfill requests",
             link: "/librarian/reservations",
             icon: "📅",
-            color: "border-l-green-500"
+            color: "border-l-purple-500"
           },
           { 
             title: "Overdue Loans", 
             description: "View and manage overdue loans",
-            link: "/librarian/overdue",
+            link: "/librarian/overdue-loans",
             icon: "⚠️",
             color: "border-l-red-500"
           },
           { 
-            title: "Reports", 
+            title: "Manage Books", 
+            description: "View library inventory and book information",
+            link: "/librarian/books",
+            icon: "📕",
+            color: "border-l-orange-500"
+          },
+          { 
+            title: "View Reports", 
             description: "Generate library reports and statistics",
             link: "/librarian/reports",
             icon: "📊",
-            color: "border-l-orange-500"
+            color: "border-l-green-500"
           },
           { 
             title: "Library Members", 

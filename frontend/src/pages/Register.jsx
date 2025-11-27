@@ -62,11 +62,11 @@ export default function Register() {
         try {
             const res = await api.post("/auth/register", {
                 username,
-                firstname,
-                lastname,
+                firstName: firstname,
+                lastName: lastname,
                 email,
                 password,
-                phonenumber
+                phoneNumber: phonenumber
             });
 
             console.log("REGISTER RESPONSE:", res.data);
@@ -74,7 +74,21 @@ export default function Register() {
             navigate("/login");
         } catch (err) {
             console.error(err);
-            setError("Registration failed. Please check your details.");
+            
+            // Handle backend field errors
+            if (err.response?.data?.fieldErrors) {
+                const backendErrors = {};
+                err.response.data.fieldErrors.forEach((fieldError) => {
+                    const fieldName = fieldError.field.toLowerCase();
+                    backendErrors[fieldName] = fieldError.message;
+                });
+                setFieldErrors(backendErrors);
+                setError("Please fix the validation errors below");
+            } else if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError("Registration failed. Please check your details.");
+            }
         }
     };
 

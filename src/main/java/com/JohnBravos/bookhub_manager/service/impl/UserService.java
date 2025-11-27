@@ -177,6 +177,16 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         userMapper.updateEntity(request, user);
+
+        if (request.role() != null && !request.role().isEmpty()) {
+            try {
+                user.setRole(UserRole.valueOf(request.role()));
+                log.info("User role updated to: {}", request.role());
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid role provided: {}", request.role());
+            }
+        }
+
         User updatedUser = userRepository.save(user);
 
         log.info("User updated successfully with ID: {}", userId);

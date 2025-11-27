@@ -17,6 +17,12 @@ import AdminAuthors from "./pages/admin/AdminAuthors";
 import AdminLoans from "./pages/admin/AdminLoans";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminSettings from "./pages/admin/AdminSettings";
+import LibrarianLoans from "./pages/librarian/LibrarianLoans";
+import LibrarianReservations from "./pages/librarian/LibrarianReservations";
+import LibrarianOverdueLoans from "./pages/librarian/LibrarianOverdueLoans";
+import LibrarianBooks from "./pages/librarian/LibrarianBooks";
+import LibrarianReports from "./pages/librarian/LibrarianReports";
+import LibrarianMembers from "./pages/librarian/LibrarianMembers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -150,6 +156,56 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <AdminSettings />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Librarian Pages */}
+            <Route
+              path="librarian/loans"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianLoans />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="librarian/reservations"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianReservations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="librarian/overdue-loans"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianOverdueLoans />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="librarian/books"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianBooks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="librarian/reports"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="librarian/members"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianMembers />
                 </ProtectedRoute>
               }
             />

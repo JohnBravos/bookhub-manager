@@ -7,6 +7,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+  const [isLibrarianMenuOpen, setIsLibrarianMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -20,6 +21,15 @@ export default function Navbar() {
     { label: "Loans", path: "/admin/loans" },
     { label: "Reservations", path: "/admin/reservations" },
     { label: "Settings", path: "/admin/settings" },
+  ];
+
+  const librarianLinks = [
+    { label: "Process Loans", path: "/librarian/loans" },
+    { label: "Handle Reservations", path: "/librarian/reservations" },
+    { label: "Overdue Loans", path: "/librarian/overdue-loans" },
+    { label: "Manage Books", path: "/librarian/books" },
+    { label: "View Reports", path: "/librarian/reports" },
+    { label: "Library Members", path: "/librarian/members" },
   ];
 
   return (
@@ -73,6 +83,38 @@ export default function Navbar() {
                         key={link.path}
                         to={link.path}
                         onClick={() => setIsAdminMenuOpen(false)}
+                        className="block px-4 py-2 hover:bg-[#3d2c1e] transition text-sm"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </li>
+          )}
+
+          {/* Librarian Menu - Only show for LIBRARIAN role */}
+          {user?.role === "LIBRARIAN" && (
+            <li className="relative">
+              <button
+                onClick={() => setIsLibrarianMenuOpen(!isLibrarianMenuOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#8b5e34] hover:bg-[#704b29] transition text-sm"
+              >
+                <span>📚</span>
+                <span>Librarian</span>
+                <span className="text-xs">{isLibrarianMenuOpen ? "▲" : "▼"}</span>
+              </button>
+
+              {/* Librarian Dropdown */}
+              {isLibrarianMenuOpen && (
+                <div className="absolute left-0 mt-2 w-56 bg-[#2a1f16] rounded-lg shadow-xl z-10">
+                  <div className="py-2">
+                    {librarianLinks.map((link) => (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        onClick={() => setIsLibrarianMenuOpen(false)}
                         className="block px-4 py-2 hover:bg-[#3d2c1e] transition text-sm"
                       >
                         {link.label}

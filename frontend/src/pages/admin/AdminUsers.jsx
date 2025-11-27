@@ -12,6 +12,7 @@ export default function AdminUsers() {
   const [deletingId, setDeletingId] = useState(null);
   const [editingUserId, setEditingUserId] = useState(null);
   const [editingRole, setEditingRole] = useState("");
+  const [editingUserData, setEditingUserData] = useState(null);
   const [updatingRole, setUpdatingRole] = useState(false);
 
   useEffect(() => {
@@ -54,16 +55,26 @@ export default function AdminUsers() {
   const handleOpenRoleModal = (user) => {
     setEditingUserId(user.id);
     setEditingRole(user.role || "MEMBER");
+    setEditingUserData(user);
   };
 
   const handleUpdateRole = async () => {
     try {
       setUpdatingRole(true);
-      await updateUser(editingUserId, { role: editingRole });
+      const updateData = {
+        firstName: editingUserData?.firstName || "",
+        lastName: editingUserData?.lastName || "",
+        phoneNumber: editingUserData?.phoneNumber || "",
+        email: editingUserData?.email || "",
+        role: editingRole
+      };
+      console.log("Updating user with data:", updateData);
+      await updateUser(editingUserId, updateData);
       setSuccess("User role updated successfully");
       fetchUsers();
       setEditingUserId(null);
       setEditingRole("");
+      setEditingUserData(null);
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Error updating user role:", err);
@@ -246,6 +257,7 @@ export default function AdminUsers() {
                 onClick={() => {
                   setEditingUserId(null);
                   setEditingRole("");
+                  setEditingUserData(null);
                 }}
                 className="flex-1 px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition font-semibold"
               >
