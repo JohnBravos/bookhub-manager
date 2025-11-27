@@ -28,6 +28,7 @@ export default function Navbar() {
     { label: "Handle Reservations", path: "/librarian/reservations" },
     { label: "Overdue Loans", path: "/librarian/overdue-loans" },
     { label: "Manage Books", path: "/librarian/books" },
+    { label: "View Authors", path: "/librarian/authors" },
     { label: "View Reports", path: "/librarian/reports" },
     { label: "Library Members", path: "/librarian/members" },
   ];

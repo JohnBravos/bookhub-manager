@@ -21,6 +21,7 @@ import LibrarianLoans from "./pages/librarian/LibrarianLoans";
 import LibrarianReservations from "./pages/librarian/LibrarianReservations";
 import LibrarianOverdueLoans from "./pages/librarian/LibrarianOverdueLoans";
 import LibrarianBooks from "./pages/librarian/LibrarianBooks";
+import LibrarianAuthors from "./pages/librarian/LibrarianAuthors";
 import LibrarianReports from "./pages/librarian/LibrarianReports";
 import LibrarianMembers from "./pages/librarian/LibrarianMembers";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -190,6 +191,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="LIBRARIAN">
                   <LibrarianBooks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="librarian/authors"
+              element={
+                <ProtectedRoute requiredRole="LIBRARIAN">
+                  <LibrarianAuthors />
                 </ProtectedRoute>
               }
             />

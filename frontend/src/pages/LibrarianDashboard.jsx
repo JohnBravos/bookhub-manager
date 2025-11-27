@@ -109,6 +109,13 @@ export default function LibrarianDashboard() {
             color: "border-l-orange-500"
           },
           { 
+            title: "View Authors", 
+            description: "Browse all library authors",
+            link: "/librarian/authors",
+            icon: "✍️",
+            color: "border-l-cyan-500"
+          },
+          { 
             title: "View Reports", 
             description: "Generate library reports and statistics",
             link: "/librarian/reports",
