@@ -14,7 +14,14 @@ export default function Layout() {
     location.pathname === "/admin/authors" ||
     location.pathname === "/admin/loans" ||
     location.pathname === "/admin/reservations" ||
-    location.pathname === "/admin/settings";
+    location.pathname === "/admin/settings" ||
+    location.pathname === "/librarian/loans" ||
+    location.pathname === "/librarian/reservations" ||
+    location.pathname === "/librarian/overdue-loans" ||
+    location.pathname === "/librarian/books" ||
+    location.pathname === "/librarian/authors" ||
+    location.pathname === "/librarian/reports" ||
+    location.pathname === "/librarian/members";
 
   return (
     <>
