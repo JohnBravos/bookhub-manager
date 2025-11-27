@@ -45,12 +45,14 @@ export default function Books() {
     if (value.trim() === "") {
       setFilteredBooks(books);
     } else {
-      const filtered = books.filter(
-        (book) =>
+      const filtered = books.filter((book) => {
+        const authorNames = book.authors?.map(a => `${a.firstName} ${a.lastName}`).join(" ") || book.author?.name || "";
+        return (
           book.title?.toLowerCase().includes(value.toLowerCase()) ||
-          book.author?.name?.toLowerCase().includes(value.toLowerCase()) ||
+          authorNames.toLowerCase().includes(value.toLowerCase()) ||
           book.isbn?.includes(value)
-      );
+        );
+      });
       setFilteredBooks(filtered);
     }
   };
@@ -153,7 +155,9 @@ export default function Books() {
                 </h3>
 
                 <p className="text-[#75563e] font-semibold mb-1">
-                  {book.author?.name || "Unknown Author"}
+                  {book.authors && book.authors.length > 0
+                    ? book.authors.map(author => `${author.firstName} ${author.lastName}`).join(", ")
+                    : book.author?.name || "Unknown Author"}
                 </p>
 
                 <p className="text-sm text-[#5a4636] mb-1">
