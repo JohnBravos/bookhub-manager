@@ -2,33 +2,76 @@ import { useEffect, useState } from "react";
 import { getAllUsers } from "../../api/admin";
 
 export default function LibrarianMembers() {
+  const [allMembers, setAllMembers] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
 
+  // Fetch all members on mount
   useEffect(() => {
     fetchMembers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search]);
+  }, []);
 
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await getAllUsers(page, 10);
-      const data = res.data.data;
-      setMembers(data?.content || data || []);
-      setTotalPages(data?.totalPages || 1);
+      let fetchedMembers = [];
+      let page = 0;
+      let hasMore = true;
+
+      // Fetch all members with pagination
+      while (hasMore) {
+        const res = await getAllUsers(page, 50);
+        const data = res.data.data;
+        const content = data?.content || [];
+        
+        if (content.length === 0) {
+          hasMore = false;
+        } else {
+          fetchedMembers = [...fetchedMembers, ...content];
+          page++;
+          
+          // Check if we've reached the end
+          if (page >= (data?.totalPages || 1)) {
+            hasMore = false;
+          }
+        }
+      }
+
+      // Filter out ADMIN users - only show MEMBER and LIBRARIAN roles
+      const filteredMembers = fetchedMembers.filter(user => 
+        user.role !== "ADMIN"
+      );
+      
+      setAllMembers(filteredMembers);
+      setMembers(filteredMembers);
       setError("");
     } catch (err) {
       console.error("Error fetching members:", err);
-      setError("Failed to load members");
+      if (err.response?.status === 403) {
+        setError("You do not have permission to view members. Please contact an administrator.");
+      } else {
+        setError("Failed to load members");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  // Filter members when search changes
+  useEffect(() => {
+    if (search.trim()) {
+      const filtered = allMembers.filter(member => 
+        member.username.toLowerCase().includes(search.toLowerCase()) ||
+        member.email.toLowerCase().includes(search.toLowerCase()) ||
+        `${member.firstName} ${member.lastName}`.toLowerCase().includes(search.toLowerCase())
+      );
+      setMembers(filtered);
+    } else {
+      setMembers(allMembers);
+    }
+  }, [search, allMembers]);
 
   if (loading) {
     return (
@@ -41,7 +84,7 @@ export default function LibrarianMembers() {
   return (
     <div className="bg-[#fdf8ee] p-8 min-h-screen">
       <h1 className="text-3xl font-bold text-[#3d2c1e] mb-2">Library Members</h1>
-      <p className="text-[#5a4636] mb-8">View and manage member information</p>
+      <p className="text-[#5a4636] mb-8">View and manage member information ({members.length})</p>
 
       {error && (
         <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -53,7 +96,7 @@ export default function LibrarianMembers() {
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Search members by username or email..."
+          placeholder="Search members by username, email or name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-3 rounded-lg border-2 border-[#e8dcc7] focus:border-[#8b5e34] focus:outline-none"
@@ -113,43 +156,6 @@ export default function LibrarianMembers() {
           </table>
         </div>
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="mt-8 flex justify-center items-center gap-4">
-          <button
-            onClick={() => setPage(Math.max(0, page - 1))}
-            disabled={page === 0}
-            className="px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] disabled:bg-gray-300 transition"
-          >
-            Previous
-          </button>
-
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i)}
-                className={`px-3 py-2 rounded-lg font-semibold transition ${
-                  page === i
-                    ? "bg-[#8b5e34] text-white"
-                    : "bg-[#f0e6d2] text-[#3d2c1e] hover:bg-[#e8dcc7]"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-            disabled={page === totalPages - 1}
-            className="px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] disabled:bg-gray-300 transition"
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   );
 }
