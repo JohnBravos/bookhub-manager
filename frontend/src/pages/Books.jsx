@@ -82,15 +82,15 @@ export default function Books() {
       
       const res = await borrowBook(selectedBook.id, user?.id, dueDate);
       
-      setSuccessMessage(`Successfully borrowed "${res.data.data?.book?.title || 'Book'}"`);
+      setSuccessMessage(`Successfully borrowed "${res.data.data?.book?.title || 'Book'}". Check My Loans to see your new loan!`);
       setShowBorrowModal(false);
       setSelectedBook(null);
       setDueDate("");
+      fetchBooks();
       
       setTimeout(() => {
         setSuccessMessage("");
-        navigate("/my-loans");
-      }, 1500);
+      }, 4000);
     } catch (err) {
       console.error("Error borrowing book:", err);
       const errorMsg = err.response?.data?.message || "Failed to borrow book";

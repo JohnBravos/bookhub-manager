@@ -12,12 +12,9 @@ export default function MyLoans() {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
+    // Always fetch loans when page or filter changes
+    setLoans([]);
     fetchLoans();
-    
-    // Set up auto-refresh every 5 seconds
-    const interval = setInterval(fetchLoans, 5000);
-    
-    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filter]);
 

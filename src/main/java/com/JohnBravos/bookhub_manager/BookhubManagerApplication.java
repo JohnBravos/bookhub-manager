@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 @Slf4j
 @SpringBootApplication
 @RequiredArgsConstructor
-public class BookhubManagerApplication {1
+public class BookhubManagerApplication {
 
 	public static void main(String[] args)
 	{
