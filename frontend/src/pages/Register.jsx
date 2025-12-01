@@ -7,6 +7,7 @@ export default function Register() {
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [email, setEmail] = useState("");
     const [phonenumber, setPhonenumber] = useState("");
     const [error, setError] = useState("");
@@ -36,6 +37,10 @@ export default function Register() {
 
         if (password.length < 6) {
             errors.password = "Password must be at least 6 characters long";
+        }
+
+        if (password !== confirmPassword) {
+            errors.confirmPassword = "Passwords do not match";
         }
 
         if (!/^\d{10}$/.test(phonenumber)) {
@@ -182,6 +187,20 @@ export default function Register() {
             />
             {fieldErrors.password && (
               <p className="text-red-300 text-sm mt-1">{fieldErrors.password}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="text-white font-semibold">Confirm Password</label>
+            <input
+              type="password"
+              className="w-full mt-1 px-3 py-2 rounded bg-white/20 text-white placeholder-gray-200 outline-none border border-white/30 focus:border-blue-400"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            {fieldErrors.confirmPassword && (
+              <p className="text-red-300 text-sm mt-1">{fieldErrors.confirmPassword}</p>
             )}
           </div>
 
