@@ -89,8 +89,8 @@ export default function Books() {
       
       setTimeout(() => {
         setSuccessMessage("");
-        fetchBooks();
-      }, 2000);
+        navigate("/my-loans");
+      }, 1500);
     } catch (err) {
       console.error("Error borrowing book:", err);
       const errorMsg = err.response?.data?.message || "Failed to borrow book";

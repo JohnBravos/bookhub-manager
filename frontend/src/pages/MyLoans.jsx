@@ -13,6 +13,11 @@ export default function MyLoans() {
 
   useEffect(() => {
     fetchLoans();
+    
+    // Set up auto-refresh every 5 seconds
+    const interval = setInterval(fetchLoans, 5000);
+    
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filter]);
 
@@ -21,6 +26,7 @@ export default function MyLoans() {
       setLoading(true);
       const res = await getMyLoans(page, 10);
       const data = res.data.data;
+      console.log("Loans response:", data);
       setLoans(data?.content || data || []);
       setTotalPages(data?.totalPages || 1);
       setError("");
@@ -80,7 +86,7 @@ export default function MyLoans() {
 
   const filteredLoans = loans.filter((loan) => {
     if (filter === "all") return true;
-    if (filter === "active") return loan.status === "ACTIVE" && !isOverdue(loan.dueDate);
+    if (filter === "active") return loan.status === "ACTIVE";
     if (filter === "overdue") return isOverdue(loan.dueDate);
     return true;
   });
