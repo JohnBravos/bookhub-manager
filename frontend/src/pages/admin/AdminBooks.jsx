@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllBooksAdmin, deleteBook, createBook, updateBook, getAllAuthors } from "../../api/admin";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function AdminBooks() {
   const [books, setBooks] = useState([]);
@@ -10,6 +11,8 @@ export default function AdminBooks() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [deletingId, setDeletingId] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingBookId, setEditingBookId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -54,6 +57,29 @@ export default function AdminBooks() {
       setAuthors(data?.content || data || []);
     } catch (err) {
       console.error("Error fetching authors:", err);
+    }
+  };
+
+  const handleOpenDeleteConfirm = (book) => {
+    setBookToDelete(book);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setDeletingId(bookToDelete.id);
+      await deleteBook(bookToDelete.id);
+      setSuccess("Book deleted successfully");
+      fetchBooks();
+      setTimeout(() => setSuccess(""), 3000);
+      setConfirmDialogOpen(false);
+      setBookToDelete(null);
+    } catch (err) {
+      console.error("Error deleting book:", err);
+      const errorMsg = err.response?.data?.message || "Failed to delete book";
+      setError(errorMsg);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -297,7 +323,7 @@ export default function AdminBooks() {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDeleteBook(book.id)}
+                          onClick={() => handleOpenDeleteConfirm(book)}
                           disabled={deletingId === book.id}
                           className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm disabled:opacity-50"
                         >
@@ -349,6 +375,21 @@ export default function AdminBooks() {
           </button>
         </div>
       )}
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialogOpen}
+        title="Delete Book?"
+        message={`Are you sure you want to delete the book "${bookToDelete?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setConfirmDialogOpen(false);
+          setBookToDelete(null);
+        }}
+      />
 
       {/* Create/Edit Modal */}
       {showModal && (

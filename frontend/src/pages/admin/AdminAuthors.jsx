@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllAuthors, deleteAuthor, createAuthor, updateAuthor } from "../../api/admin";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function AdminAuthors() {
   const [authors, setAuthors] = useState([]);
@@ -9,6 +10,8 @@ export default function AdminAuthors() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [deletingId, setDeletingId] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [authorToDelete, setAuthorToDelete] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingAuthorId, setEditingAuthorId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -32,6 +35,29 @@ export default function AdminAuthors() {
       setError("Failed to load authors");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenDeleteConfirm = (author) => {
+    setAuthorToDelete(author);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setDeletingId(authorToDelete.id);
+      await deleteAuthor(authorToDelete.id);
+      setSuccess("Author deleted successfully");
+      fetchAuthors();
+      setTimeout(() => setSuccess(""), 3000);
+      setConfirmDialogOpen(false);
+      setAuthorToDelete(null);
+    } catch (err) {
+      console.error("Error deleting author:", err);
+      const errorMsg = err.response?.data?.message || "Failed to delete author";
+      setError(errorMsg);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -193,7 +219,7 @@ export default function AdminAuthors() {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDeleteAuthor(author.id)}
+                          onClick={() => handleOpenDeleteConfirm(author)}
                           disabled={deletingId === author.id}
                           className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm disabled:opacity-50"
                         >
@@ -245,6 +271,21 @@ export default function AdminAuthors() {
           </button>
         </div>
       )}
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialogOpen}
+        title="Delete Author?"
+        message={`Are you sure you want to delete author "${authorToDelete?.firstName} ${authorToDelete?.lastName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setConfirmDialogOpen(false);
+          setAuthorToDelete(null);
+        }}
+      />
 
       {/* Create/Edit Modal */}
       {showModal && (

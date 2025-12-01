@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllUsers, deleteUser, updateUser } from "../../api/admin";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -10,6 +11,8 @@ export default function AdminUsers() {
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const [editingUserId, setEditingUserId] = useState(null);
   const [editingRole, setEditingRole] = useState("");
   const [editingUserData, setEditingUserData] = useState(null);
@@ -33,6 +36,29 @@ export default function AdminUsers() {
       setError("Failed to load users");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenDeleteConfirm = (user) => {
+    setUserToDelete(user);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setDeletingId(userToDelete.id);
+      await deleteUser(userToDelete.id);
+      setSuccess("User deleted successfully");
+      fetchUsers();
+      setTimeout(() => setSuccess(""), 3000);
+      setConfirmDialogOpen(false);
+      setUserToDelete(null);
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      const errorMsg = err.response?.data?.message || "Failed to delete user";
+      setError(errorMsg);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -173,7 +199,7 @@ export default function AdminUsers() {
                           Edit Role
                         </button>
                         <button
-                          onClick={() => handleDeleteUser(user.id)}
+                          onClick={() => handleOpenDeleteConfirm(user)}
                           disabled={deletingId === user.id}
                           className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm disabled:opacity-50"
                         >
@@ -225,6 +251,21 @@ export default function AdminUsers() {
           </button>
         </div>
       )}
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialogOpen}
+        title="Delete User?"
+        message={`Are you sure you want to delete user "${userToDelete?.username}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setConfirmDialogOpen(false);
+          setUserToDelete(null);
+        }}
+      />
 
       {/* Edit Role Modal */}
       {editingUserId && (

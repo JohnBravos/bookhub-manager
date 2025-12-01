@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Bean;
 @RequiredArgsConstructor
 public class BookhubManagerApplication {
 
-	private final AuthenticationService authenticationService;
-	private final UserRepository userRepository;
-
 	public static void main(String[] args)
 	{
 
