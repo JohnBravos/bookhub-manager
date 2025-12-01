@@ -12,6 +12,6 @@ export const searchBooks = async (query) => {
   return api.get("/books", { params: { search: query } });
 };
 
-export const borrowBook = async (bookId, userId) => {
-  return api.post("/loans", { bookId, userId });
+export const borrowBook = async (bookId, userId, dueDate) => {
+  return api.post("/loans", { bookId, userId, dueDate });
 };

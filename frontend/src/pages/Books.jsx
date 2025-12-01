@@ -15,6 +15,9 @@ export default function Books() {
   const [successMessage, setSuccessMessage] = useState("");
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [showBorrowModal, setShowBorrowModal] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [dueDate, setDueDate] = useState("");
 
   useEffect(() => {
     fetchBooks();
@@ -57,18 +60,37 @@ export default function Books() {
     }
   };
 
-  const handleBorrow = async (bookId) => {
+  const handleBorrow = (book) => {
+    setSelectedBook(book);
+    // Set default due date to 14 days from now
+    const today = new Date();
+    const defaultDueDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const dateString = defaultDueDate.toISOString().split('T')[0];
+    setDueDate(dateString);
+    setShowBorrowModal(true);
+  };
+
+  const handleConfirmBorrow = async () => {
+    if (!dueDate) {
+      setError("Please select a due date");
+      return;
+    }
+
     try {
-      setBorrowing(bookId);
+      setBorrowing(selectedBook.id);
       setSuccessMessage("");
       
-      const res = await borrowBook(bookId, user?.id);
+      const res = await borrowBook(selectedBook.id, user?.id, dueDate);
       
       setSuccessMessage(`Successfully borrowed "${res.data.data?.book?.title || 'Book'}"`);
+      setShowBorrowModal(false);
+      setSelectedBook(null);
+      setDueDate("");
       
       setTimeout(() => {
         setSuccessMessage("");
-      }, 3000);
+        fetchBooks();
+      }, 2000);
     } catch (err) {
       console.error("Error borrowing book:", err);
       const errorMsg = err.response?.data?.message || "Failed to borrow book";
@@ -195,7 +217,7 @@ export default function Books() {
                 {/* Button Container */}
                 <div className="flex gap-2 mt-auto">
                   <button
-                    onClick={() => handleBorrow(book.id)}
+                    onClick={() => handleBorrow(book)}
                     disabled={book.status !== "AVAILABLE" || borrowing === book.id}
                     className={`flex-1 py-2 rounded-lg font-semibold transition ${
                       book.status === "AVAILABLE"
@@ -256,6 +278,52 @@ export default function Books() {
           >
             Next
           </button>
+        </div>
+      )}
+
+      {/* Borrow Modal */}
+      {showBorrowModal && selectedBook && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold text-[#3d2c1e] mb-2">Borrow Book</h2>
+            <p className="text-[#5a4636] mb-6">"{selectedBook.title}"</p>
+
+            <div className="mb-6">
+              <label className="block text-[#3d2c1e] font-semibold mb-2">
+                Due Date
+              </label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full px-3 py-2 border-2 border-[#c9a66b] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8b5e34]"
+              />
+              <p className="text-sm text-[#5a4636] mt-2">
+                Select when you plan to return this book
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleConfirmBorrow}
+                disabled={borrowing === selectedBook.id || !dueDate}
+                className="flex-1 px-4 py-2 bg-[#8b5e34] text-white rounded-lg hover:bg-[#704b29] transition font-semibold disabled:opacity-50"
+              >
+                {borrowing === selectedBook.id ? "Borrowing..." : "Confirm"}
+              </button>
+              <button
+                onClick={() => {
+                  setShowBorrowModal(false);
+                  setSelectedBook(null);
+                  setDueDate("");
+                }}
+                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-semibold"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
