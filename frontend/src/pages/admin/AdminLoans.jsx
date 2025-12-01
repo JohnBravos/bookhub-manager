@@ -115,10 +115,12 @@ export default function AdminLoans() {
                     }`}
                   >
                     <td className="px-6 py-4 font-semibold text-[#3d2c1e]">
-                      {loan.memberName || "N/A"}
+                      {loan.user?.firstName && loan.user?.lastName
+                        ? `${loan.user.firstName} ${loan.user.lastName}`
+                        : loan.user?.username || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
-                      {loan.bookTitle || "N/A"}
+                      {loan.book?.title || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {new Date(loan.loanDate).toLocaleDateString()}

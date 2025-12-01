@@ -100,7 +100,9 @@ export default function LibrarianLoans() {
                 loans.map((loan) => (
                   <tr key={loan.id} className="hover:bg-[#fdf8ee] transition">
                     <td className="px-6 py-4 font-semibold text-[#3d2c1e]">
-                      {loan.member?.username || "Unknown"}
+                      {loan.user?.firstName && loan.user?.lastName
+                        ? `${loan.user.firstName} ${loan.user.lastName}`
+                        : loan.user?.username || "Unknown"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {loan.book?.title || "Unknown"}
