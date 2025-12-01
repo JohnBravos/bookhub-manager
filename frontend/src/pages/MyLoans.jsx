@@ -162,7 +162,9 @@ export default function MyLoans() {
                       {loan.book?.title || "Unknown Book"}
                     </h3>
                     <p className="text-[#75563e] font-semibold">
-                      {loan.book?.author?.name || "Unknown Author"}
+                      {loan.book?.authors && loan.book.authors.length > 0
+                        ? loan.book.authors.map(author => `${author.firstName} ${author.lastName}`).join(", ")
+                        : loan.book?.author?.name || "Unknown Author"}
                     </p>
                   </div>
                   <span
