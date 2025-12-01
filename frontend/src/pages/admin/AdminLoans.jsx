@@ -19,8 +19,15 @@ export default function AdminLoans() {
       setLoading(true);
       const res = await getAllLoansAdmin(page, 10, filterStatus);
       const data = res.data.data;
-      setLoans(data?.content || data || []);
-      setTotalPages(data?.totalPages || 1);
+      let loansData = Array.isArray(data) ? data : [];
+
+      // Filter by status on frontend since backend doesn't support it
+      if (filterStatus !== "ALL") {
+        loansData = loansData.filter((loan) => loan.status === filterStatus);
+      }
+
+      setLoans(loansData);
+      setTotalPages(1); // Backend doesn't support pagination
       setError("");
     } catch (err) {
       console.error("Error fetching loans:", err);

@@ -19,7 +19,7 @@ export default function LibrarianLoans() {
       setLoading(true);
       const res = await getAllLoansAdmin(page, 10);
       const data = res.data.data;
-      let loansData = data?.content || data || [];
+      let loansData = Array.isArray(data) ? data : [];
 
       // Filter by status
       if (statusFilter !== "ALL") {
@@ -27,7 +27,7 @@ export default function LibrarianLoans() {
       }
 
       setLoans(loansData);
-      setTotalPages(data?.totalPages || 1);
+      setTotalPages(1); // Backend doesn't support pagination
       setError("");
     } catch (err) {
       console.error("Error fetching loans:", err);
