@@ -20,8 +20,9 @@ export default function MyReservations() {
       setLoading(true);
       const res = await getMyReservations(page, 10);
       const data = res.data.data;
-      setReservations(data?.content || data || []);
-      setTotalPages(data?.totalPages || 1);
+      let reservationsData = Array.isArray(data) ? data : [];
+      setReservations(reservationsData);
+      setTotalPages(1); // Backend doesn't support pagination
       setError("");
     } catch (err) {
       console.error("Error fetching reservations:", err);

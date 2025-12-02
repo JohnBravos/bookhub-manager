@@ -1,9 +1,7 @@
 import axios from "./axios";
 
 export const getMyReservations = async (page = 0, size = 10) => {
-  return axios.get(`/reservations/my-reservations`, {
-    params: { page, size },
-  });
+  return axios.get(`/reservations/my-reservations`);
 };
 
 export const getReservationById = async (reservationId) => {
