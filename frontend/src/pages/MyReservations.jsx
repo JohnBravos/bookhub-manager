@@ -21,6 +21,10 @@ export default function MyReservations() {
       const res = await getMyReservations(page, 10);
       const data = res.data.data;
       let reservationsData = Array.isArray(data) ? data : [];
+      console.log("Reservations data:", reservationsData);
+      if (reservationsData.length > 0) {
+        console.log("First reservation:", reservationsData[0]);
+      }
       setReservations(reservationsData);
       setTotalPages(1); // Backend doesn't support pagination
       setError("");
@@ -161,7 +165,7 @@ export default function MyReservations() {
                         Queue Position
                       </p>
                       <p className="font-bold text-[#3d2c1e]">
-                        #{reservation.queuePosition || "N/A"}
+                        {reservation.queuePosition ? `#${reservation.queuePosition}` : "#N/A"}
                       </p>
                     </div>
 
@@ -188,16 +192,14 @@ export default function MyReservations() {
                     )}
                   </div>
 
-                  {/* Cancel Button */}
-                  {reservation.status === "PENDING" && (
+                  {/* Cancel Button - Always show for active and pending reservations */}
+                  {(reservation.status === "PENDING" || reservation.status === "ACTIVE") && (
                     <button
                       onClick={() => handleCancelReservation(reservation.id)}
                       disabled={cancelingId === reservation.id}
-                      className="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50"
+                      className="mt-4 px-3 py-1 bg-red-500 text-white text-sm rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50"
                     >
-                      {cancelingId === reservation.id
-                        ? "Cancelling..."
-                        : "Cancel Reservation"}
+                      {cancelingId === reservation.id ? "..." : "Cancel"}
                     </button>
                   )}
                 </div>
