@@ -23,6 +23,9 @@ export default function Books() {
 
   useEffect(() => {
     fetchBooks();
+    // Auto-refresh books every 3 seconds to show updated availability
+    const interval = setInterval(fetchBooks, 3000);
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 

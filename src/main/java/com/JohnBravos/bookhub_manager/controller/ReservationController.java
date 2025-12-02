@@ -116,7 +116,7 @@ public class ReservationController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
-        User currentUser = userRepository.findByEmail(username)
+        User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
         ReservationResponse reservationToCancel = reservationService.getReservationById(id);
