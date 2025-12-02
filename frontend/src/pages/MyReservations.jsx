@@ -24,6 +24,8 @@ export default function MyReservations() {
       console.log("Reservations data:", reservationsData);
       if (reservationsData.length > 0) {
         console.log("First reservation:", reservationsData[0]);
+        console.log("First reservation book:", reservationsData[0].book);
+        console.log("First reservation book authors:", reservationsData[0].book?.authors);
       }
       setReservations(reservationsData);
       setTotalPages(1); // Backend doesn't support pagination
@@ -135,7 +137,11 @@ export default function MyReservations() {
                     {reservation.book?.title || "Unknown Book"}
                   </h3>
                   <p className="text-[#75563e] font-semibold mb-2">
-                    {reservation.book?.author?.name || "Unknown Author"}
+                    {reservation.book?.authors && Array.isArray(reservation.book.authors) && reservation.book.authors.length > 0
+                      ? reservation.book.authors.map(author => `${author.firstName} ${author.lastName}`).join(", ")
+                      : reservation.book?.author?.firstName && reservation.book?.author?.lastName
+                      ? `${reservation.book.author.firstName} ${reservation.book.author.lastName}`
+                      : reservation.book?.author?.name || "Unknown Author"}
                   </p>
                   <p className="text-sm text-[#5a4636]">
                     ISBN: {reservation.book?.isbn || "N/A"}
@@ -166,7 +172,7 @@ export default function MyReservations() {
                       </p>
                       <p className="font-bold text-[#3d2c1e]">
                         {reservation.positionInQueue !== undefined && reservation.positionInQueue !== null
-                          ? `#${reservation.positionInQueue}`
+                          ? `#${reservation.positionInQueue + 1}`
                           : "#N/A"}
                       </p>
                     </div>
