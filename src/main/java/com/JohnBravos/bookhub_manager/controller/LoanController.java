@@ -90,7 +90,7 @@ public class LoanController {
 
     // CREATE LOAN (Librarian/Admin only)
     @PostMapping
-    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN', 'MEMBER')")
     public ResponseEntity<ApiResponse<LoanResponse>> createLoan(@Valid @RequestBody CreateLoanRequest request) {
         log.info("Creating new loan for user ID: {} and book ID: {}", request.userId(), request.bookId());
         LoanResponse loan = loanService.createLoan(request);

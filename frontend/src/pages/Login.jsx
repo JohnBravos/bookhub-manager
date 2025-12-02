@@ -45,10 +45,18 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center"
-      style={{ backgroundImage: `url(${backgroundImg})` }}
-    >
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image with lazy loading */}
+      <img
+        src={backgroundImg}
+        alt="Library background"
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover -z-10"
+      />
+      
+      {/* Blur overlay */}
+      <div className="absolute inset-0 bg-black/30 -z-10" />
+
       <div className="bg-white/10 backdrop-blur-md p-10 rounded-xl shadow-2xl w-full max-w-md border border-white/20">
         
         <h1 className="text-3xl font-bold text-white text-center mb-8 drop-shadow-lg">
