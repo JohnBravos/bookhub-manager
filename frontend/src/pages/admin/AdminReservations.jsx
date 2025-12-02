@@ -17,9 +17,17 @@ export default function AdminReservations() {
   const fetchReservations = async () => {
     try {
       setLoading(true);
-      const res = await getAllReservationsAdmin(page, 10, filterStatus);
+      // Don't pass status to API - we'll filter on frontend
+      const res = await getAllReservationsAdmin(page, 10);
       const data = res.data.data;
-      setReservations(data?.content || data || []);
+      let allReservations = Array.isArray(data) ? data : data?.content || [];
+      
+      // Frontend filtering by status
+      if (filterStatus !== "ALL") {
+        allReservations = allReservations.filter(r => r.status === filterStatus);
+      }
+      
+      setReservations(allReservations);
       setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
@@ -108,16 +116,16 @@ export default function AdminReservations() {
                 reservations.map((reservation) => (
                   <tr key={reservation.id} className="hover:bg-[#fdf8ee] transition">
                     <td className="px-6 py-4 font-semibold text-[#3d2c1e]">
-                      {reservation.memberName || "N/A"}
+                      {reservation.user ? `${reservation.user.firstName} ${reservation.user.lastName}` : "N/A"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
-                      {reservation.bookTitle || "N/A"}
+                      {reservation.book?.title || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {new Date(reservation.reservationDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-center font-semibold text-[#8b5e34]">
-                      #{reservation.queuePosition || 1}
+                      #{(reservation.positionInQueue !== undefined ? reservation.positionInQueue + 1 : 1)}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusBadgeClass(reservation.status)}`}>
