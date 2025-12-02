@@ -180,17 +180,32 @@ public class BookService implements IBookService {
                 book.setAuthors(authors);
             }
 
-            // Handle totalCopies change - recalculate available copies
-            if (request.totalCopies() != null && !request.totalCopies().equals(book.getTotalCopies())) {
-                int borrowedCopies = book.getTotalCopies() - book.getAvailableCopies();
-                int newAvailable = request.totalCopies() - borrowedCopies;
-                log.info("📊 Recalculating available copies for book ID: {} | Old Total: {}, New Total: {}, Borrowed: {}, New Available: {}", 
-                         bookId, book.getTotalCopies(), request.totalCopies(), borrowedCopies, newAvailable);
+            // Calculate borrowed copies BEFORE any changes
+            int oldTotalCopies = book.getTotalCopies();
+            int oldAvailableCopies = book.getAvailableCopies();
+            int borrowedCopies = oldTotalCopies - oldAvailableCopies;
+            
+            log.info("📊 Before update - Total: {}, Available: {}, Borrowed: {}", 
+                     oldTotalCopies, oldAvailableCopies, borrowedCopies);
+
+            // Update the book entity
+            bookMapper.updateEntity(request, book);
+            
+            // IMPORTANT: Override totalCopies and availableCopies if they changed
+            // This ensures borrowed copies are preserved
+            if (request.totalCopies() != null) {
+                int newTotal = request.totalCopies();
+                int newAvailable = newTotal - borrowedCopies;
+                
+                log.info("📊 After mapper - Overriding copies | New Total: {}, Borrowed: {}, New Available: {}", 
+                         newTotal, borrowedCopies, newAvailable);
+                
+                book.setTotalCopies(newTotal);
                 book.setAvailableCopies(newAvailable);
             }
 
-            bookMapper.updateEntity(request, book);
             Book updatedBook = bookRepository.save(book);
+            log.info("📊 After save - Total: {}, Available: {}", updatedBook.getTotalCopies(), updatedBook.getAvailableCopies());
 
             log.info("Book updated successfully with ID: {}", bookId);
             return bookMapper.toResponse(updatedBook);
