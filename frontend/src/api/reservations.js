@@ -19,3 +19,7 @@ export const getAllReservations = async (page = 0, size = 10) => {
     params: { page, size },
   });
 };
+
+export const createReservation = async (bookId, userId) => {
+  return axios.post(`/reservations`, { bookId, userId });
+};

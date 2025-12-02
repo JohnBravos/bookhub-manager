@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllBooks, borrowBook } from "../api/books";
+import { createReservation } from "../api/reservations";
 import useAuth from "../hooks/useAuth";
 
 export default function Books() {
@@ -18,6 +19,7 @@ export default function Books() {
   const [showBorrowModal, setShowBorrowModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [dueDate, setDueDate] = useState("");
+  const [reserving, setReserving] = useState(null);
 
   useEffect(() => {
     fetchBooks();
@@ -100,6 +102,32 @@ export default function Books() {
       }, 3000);
     } finally {
       setBorrowing(null);
+    }
+  };
+
+  const handleReserve = async (book) => {
+    try {
+      setReserving(book.id);
+      setSuccessMessage("");
+      setError("");
+      
+      await createReservation(book.id, user?.id);
+      
+      setSuccessMessage(`Successfully reserved "${book.title}". Check My Reservations to see your reservation!`);
+      fetchBooks();
+      
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 4000);
+    } catch (err) {
+      console.error("Error reserving book:", err);
+      const errorMsg = err.response?.data?.message || "Failed to reserve book";
+      setError(errorMsg);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } finally {
+      setReserving(null);
     }
   };
 
@@ -215,25 +243,30 @@ export default function Books() {
                 </div>
 
                 {/* Button Container */}
-                <div className="flex gap-2 mt-auto">
+                <div className="grid grid-cols-3 gap-2 mt-auto">
                   <button
                     onClick={() => handleBorrow(book)}
                     disabled={book.status !== "AVAILABLE" || borrowing === book.id}
-                    className={`flex-1 py-2 rounded-lg font-semibold transition ${
+                    className={`py-2 rounded-lg font-semibold text-sm transition ${
                       book.status === "AVAILABLE"
                         ? "bg-[#8b5e34] text-white hover:bg-[#704b29] cursor-pointer"
                         : "bg-gray-300 text-gray-600 cursor-not-allowed"
                     } ${borrowing === book.id ? "opacity-50" : ""}`}
                   >
-                    {borrowing === book.id
-                      ? "Borrowing..."
-                      : book.status === "AVAILABLE"
-                      ? "Borrow"
-                      : "Unavailable"}
+                    {borrowing === book.id ? "..." : "Borrow"}
+                  </button>
+                  <button
+                    onClick={() => handleReserve(book)}
+                    disabled={reserving === book.id}
+                    className={`py-2 rounded-lg font-semibold text-sm transition bg-[#a67c52] text-white hover:bg-[#8b6a45] ${
+                      reserving === book.id ? "opacity-50" : ""
+                    }`}
+                  >
+                    {reserving === book.id ? "..." : "Reserve"}
                   </button>
                   <button
                     onClick={() => navigate(`/books/${book.id}`)}
-                    className="flex-1 py-2 rounded-lg font-semibold bg-[#f0e6d2] text-[#3d2c1e] hover:bg-[#e8dcc7] transition"
+                    className="py-2 rounded-lg font-semibold text-sm bg-[#f0e6d2] text-[#3d2c1e] hover:bg-[#e8dcc7] transition"
                   >
                     Details
                   </button>
