@@ -5,6 +5,7 @@ import com.JohnBravos.bookhub_manager.model.Author;
 import com.JohnBravos.bookhub_manager.model.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,9 +23,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // Books by title (contains)
     List<Book> findByTitleContainingIgnoreCase(String title);
 
+    @EntityGraph(attributePaths = {"authors"})
     Page<Book> findAll(Pageable pageable);
 
     // Books by author name
+    @EntityGraph(attributePaths = {"authors"})
     @Query("SELECT b FROM Book b JOIN b.authors a WHERE a.firstName LIKE %:name% OR a.lastName LIKE %:name%")
     List<Book> findByAuthorNameContaining(@Param("name") String name);
 
@@ -50,6 +53,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByGenreContainingIgnoreCase(String genre);
 
     // Books by multiple criteria (search)
+    @EntityGraph(attributePaths = {"authors"})
     @Query("SELECT b FROM Book b WHERE " +
             "LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
@@ -72,6 +76,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findAvailableBooksForLoan();
 
     // Books by author ID
+    @EntityGraph(attributePaths = {"authors"})
     @Query("SELECT b FROM Book b JOIN b.authors a WHERE a.id = :authorId")
     List<Book> findByAuthorId(@Param("authorId") Long authorId);
 }

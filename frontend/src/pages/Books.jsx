@@ -28,17 +28,36 @@ export default function Books() {
 
   const fetchBooks = async () => {
     try {
+      console.log("🔄 Fetching books...", { page });
       setLoading(true);
       const res = await getAllBooks(page, 9);
-      // Handle paginated response
+      console.log("📦 Books response received:", res.data);
+      
+      // Handle paginated response - backend returns Page object with .content array
       const data = res.data.data;
-      const bookData = data?.content || data || [];
+      console.log("📊 Data structure:", { data, hasContent: 'content' in data, isArray: Array.isArray(data) });
+      
+      let bookData = [];
+      
+      // If data has .content property, it's a Page object
+      if (data && typeof data === 'object' && 'content' in data) {
+        bookData = data.content || [];
+        setTotalPages(data.totalPages || 1);
+        console.log("✅ Parsed as Page object - content:", bookData.length, "items");
+      } else if (Array.isArray(data)) {
+        // If data is already an array
+        bookData = data;
+        setTotalPages(1);
+        console.log("✅ Parsed as Array -", bookData.length, "items");
+      } else {
+        console.warn("⚠️ Unexpected data format:", data);
+      }
+      
       setBooks(bookData);
       setFilteredBooks(bookData);
-      setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
-      console.error("Error fetching books:", err);
+      console.error("❌ Error fetching books:", err);
       setError("Failed to load books. Please try again.");
     } finally {
       setLoading(false);
@@ -142,12 +161,24 @@ export default function Books() {
   return (
     <div className="bg-[#fdf8ee] p-8 h-full">
       {/* Header */}
-      <h1 className="text-4xl font-extrabold text-[#3d2c1e] mb-2">
-        Browse Books
-      </h1>
-      <p className="text-[#5a4636] text-lg mb-8">
-        Discover and borrow books from our collection
-      </p>
+      <div className="flex justify-between items-start mb-8">
+        <div>
+          <h1 className="text-4xl font-extrabold text-[#3d2c1e] mb-2">
+            Browse Books
+          </h1>
+          <p className="text-[#5a4636] text-lg">
+            Discover and borrow books from our collection
+          </p>
+        </div>
+        <button
+          onClick={fetchBooks}
+          disabled={loading}
+          className="bg-[#8b5e34] hover:bg-[#6d4a28] disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold transition"
+          title="Refresh book availability"
+        >
+          {loading ? "Refreshing..." : "🔄 Refresh"}
+        </button>
+      </div>
 
       {/* Search Bar */}
       <div className="mb-8">

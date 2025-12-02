@@ -2,7 +2,8 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api",
-  withCredentials: true
+  withCredentials: true,
+  timeout: 30000 // 30 seconds for slow queries
 });
 
 api.interceptors.request.use(

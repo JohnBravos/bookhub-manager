@@ -207,11 +207,12 @@ public class BookService implements IBookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        int currentAvailable = book.getAvailableCopies();
-        int difference = newTotalCopies - book.getTotalCopies();
-
+        // Calculate how many copies are currently borrowed
+        int borrowedCopies = book.getTotalCopies() - book.getAvailableCopies();
+        
+        // Set new total and recalculate available based on borrowed count
         book.setTotalCopies(newTotalCopies);
-        book.setAvailableCopies(currentAvailable + difference);
+        book.setAvailableCopies(newTotalCopies - borrowedCopies);
 
         // Update status based on availability
         if (book.getAvailableCopies() > 0) {

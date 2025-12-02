@@ -101,12 +101,24 @@ export default function MyLoans() {
   return (
     <div className="bg-[#fdf8ee] p-8 h-full">
       {/* Header */}
-      <h1 className="text-4xl font-extrabold text-[#3d2c1e] mb-2">
-        My Loans
-      </h1>
-      <p className="text-[#5a4636] text-lg mb-8">
-        Manage your active loans and returns
-      </p>
+      <div className="flex justify-between items-start mb-8">
+        <div>
+          <h1 className="text-4xl font-extrabold text-[#3d2c1e] mb-2">
+            My Loans
+          </h1>
+          <p className="text-[#5a4636] text-lg">
+            Manage your active loans and returns
+          </p>
+        </div>
+        <button
+          onClick={fetchLoans}
+          disabled={loading}
+          className="bg-[#8b5e34] hover:bg-[#6d4a28] disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold transition"
+          title="Refresh loans"
+        >
+          {loading ? "Refreshing..." : "🔄 Refresh"}
+        </button>
+      </div>
 
       {/* Filter Buttons */}
       <div className="flex gap-4 mb-8">
