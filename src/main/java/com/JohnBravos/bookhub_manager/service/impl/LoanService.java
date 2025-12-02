@@ -50,10 +50,6 @@ public class LoanService implements ILoanService {
         // Business Rules Validation
         validateLoanCreation(user, book);
 
-        // reduce copies
-        book.setAvailableCopies(book.getAvailableCopies() - 1);
-        bookRepository.save(book);
-
         // Manual Builder for CREATE
         Loan loan = Loan.builder()
                 .user(user)

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMyReservations, cancelReservation } from "../api/reservations";
+import useAuth from "../hooks/useAuth";
 
 export default function MyReservations() {
+  const { user } = useAuth();
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -18,7 +20,7 @@ export default function MyReservations() {
   const fetchReservations = async () => {
     try {
       setLoading(true);
-      const res = await getMyReservations(page, 10);
+      const res = await getMyReservations(user?.id, page, 10);
       const data = res.data.data;
       let reservationsData = Array.isArray(data) ? data : [];
       console.log("Reservations data:", reservationsData);

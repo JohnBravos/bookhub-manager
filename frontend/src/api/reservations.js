@@ -1,7 +1,7 @@
 import axios from "./axios";
 
-export const getMyReservations = async (page = 0, size = 10) => {
-  return axios.get(`/reservations`);
+export const getMyReservations = async (userId, page = 0, size = 10) => {
+  return axios.get(`/reservations/user/${userId}`);
 };
 
 export const getReservationById = async (reservationId) => {

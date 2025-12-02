@@ -1,7 +1,7 @@
 import api from "./axios";
 
-export const getMyLoans = async (page = 0, size = 10) => {
-  return api.get("/loans", { params: { page, size } });
+export const getMyLoans = async (userId, page = 0, size = 10) => {
+  return api.get(`/loans/user/${userId}`, { params: { page, size } });
 };
 
 export const getActiveLoans = async (page = 0, size = 10) => {

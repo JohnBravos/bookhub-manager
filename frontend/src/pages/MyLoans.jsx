@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMyLoans, returnLoan, renewLoan } from "../api/loans";
+import useAuth from "../hooks/useAuth";
 
 export default function MyLoans() {
+  const { user } = useAuth();
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -21,10 +23,10 @@ export default function MyLoans() {
   const fetchLoans = async () => {
     try {
       setLoading(true);
-      const res = await getMyLoans(page, 10);
+      const res = await getMyLoans(user?.id, page, 10);
       const data = res.data.data;
       console.log("Loans response:", data);
-      setLoans(data?.content || data || []);
+      setLoans(Array.isArray(data) ? data : data?.content || []);
       setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
