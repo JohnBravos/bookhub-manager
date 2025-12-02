@@ -9,7 +9,7 @@ export const getReservationById = async (reservationId) => {
 };
 
 export const cancelReservation = async (reservationId) => {
-  return axios.delete(`/reservations/${reservationId}`);
+  return axios.post(`/reservations/${reservationId}/cancel`);
 };
 
 export const getAllReservations = async (page = 0, size = 10) => {
