@@ -165,7 +165,9 @@ export default function MyReservations() {
                         Queue Position
                       </p>
                       <p className="font-bold text-[#3d2c1e]">
-                        {reservation.queuePosition ? `#${reservation.queuePosition}` : "#N/A"}
+                        {reservation.positionInQueue !== undefined && reservation.positionInQueue !== null
+                          ? `#${reservation.positionInQueue}`
+                          : "#N/A"}
                       </p>
                     </div>
 
