@@ -187,7 +187,7 @@ export default function AdminBooks() {
         publisher: formData.publisher,
         publicationYear: parseInt(formData.publicationYear),
         totalCopies: parseInt(formData.totalCopies),
-        availableCopies: parseInt(formData.availableCopies),
+        // Note: availableCopies is managed by the backend based on borrowed copies
       };
       
       // Only include ISBN if it has a value

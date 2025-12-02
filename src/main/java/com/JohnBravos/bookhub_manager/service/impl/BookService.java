@@ -164,6 +164,7 @@ public class BookService implements IBookService {
         }
 
 
+        @Override
         @Transactional
         public BookResponse updateBook(Long bookId, UpdateBookRequest request) {
             log.info("Updating book with ID: {}", bookId);
@@ -177,6 +178,15 @@ public class BookService implements IBookService {
                     throw new AuthorNotFoundException("One or more authors not found");
                 }
                 book.setAuthors(authors);
+            }
+
+            // Handle totalCopies change - recalculate available copies
+            if (request.totalCopies() != null && !request.totalCopies().equals(book.getTotalCopies())) {
+                int borrowedCopies = book.getTotalCopies() - book.getAvailableCopies();
+                int newAvailable = request.totalCopies() - borrowedCopies;
+                log.info("📊 Recalculating available copies for book ID: {} | Old Total: {}, New Total: {}, Borrowed: {}, New Available: {}", 
+                         bookId, book.getTotalCopies(), request.totalCopies(), borrowedCopies, newAvailable);
+                book.setAvailableCopies(newAvailable);
             }
 
             bookMapper.updateEntity(request, book);
@@ -209,10 +219,16 @@ public class BookService implements IBookService {
 
         // Calculate how many copies are currently borrowed
         int borrowedCopies = book.getTotalCopies() - book.getAvailableCopies();
+        log.info("📊 BEFORE UPDATE - ID: {}, Total: {}, Available: {}, Borrowed: {}", 
+                 bookId, book.getTotalCopies(), book.getAvailableCopies(), borrowedCopies);
         
         // Set new total and recalculate available based on borrowed count
         book.setTotalCopies(newTotalCopies);
-        book.setAvailableCopies(newTotalCopies - borrowedCopies);
+        int newAvailable = newTotalCopies - borrowedCopies;
+        book.setAvailableCopies(newAvailable);
+        
+        log.info("📊 AFTER SET - ID: {}, Total: {}, Available: {}", 
+                 bookId, book.getTotalCopies(), book.getAvailableCopies());
 
         // Update status based on availability
         if (book.getAvailableCopies() > 0) {
@@ -222,8 +238,11 @@ public class BookService implements IBookService {
         }
 
         Book updatedBook = bookRepository.save(book);
-
+        
+        log.info("📊 AFTER SAVE - ID: {}, Total: {}, Available: {}", 
+                 bookId, updatedBook.getTotalCopies(), updatedBook.getAvailableCopies());
         log.info("Book copies updated successfully for book ID: {}", bookId);
+
         return bookMapper.toResponse(updatedBook);
     }
 
