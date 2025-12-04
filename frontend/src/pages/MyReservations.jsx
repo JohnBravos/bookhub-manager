@@ -22,15 +22,8 @@ export default function MyReservations() {
       setLoading(true);
       const res = await getMyReservations(user?.id, page, 10);
       const data = res.data.data;
-      let reservationsData = Array.isArray(data) ? data : [];
-      console.log("Reservations data:", reservationsData);
-      if (reservationsData.length > 0) {
-        console.log("First reservation:", reservationsData[0]);
-        console.log("First reservation book:", reservationsData[0].book);
-        console.log("First reservation book authors:", reservationsData[0].book?.authors);
-      }
-      setReservations(reservationsData);
-      setTotalPages(1); // Backend doesn't support pagination
+      setReservations(Array.isArray(data) ? data : data?.content || []);
+      setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
       console.error("Error fetching reservations:", err);
