@@ -16,6 +16,10 @@ import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.IReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +36,15 @@ public class ReservationService implements IReservationService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final ReservationMapper reservationMapper;
+
+    private Sort buildSort(String sort) {
+        String[] sortParams = sort.split(",");
+        String sortBy = sortParams[0];
+        Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        return Sort.by(direction, sortBy);
+    }
 
     @Override
     @Transactional
@@ -98,18 +111,22 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public List<ReservationResponse> getAllReservations() {
+    public Page<ReservationResponse> getAllReservations(int page, int size, String sort) {
         log.debug("Fetching all reservations");
-        return reservationMapper.toResponseList(reservationRepository.findAll());
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return reservationRepository.findAll(pageable)
+                .map(reservationMapper::toResponse);
     }
 
     @Override
-    public List<ReservationResponse> getReservationsByUser(Long userId) {
+    public Page<ReservationResponse> getReservationsByUser(Long userId, int page, int size, String sort) {
         log.debug("Fetching reservation for user ID: {}", userId);
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-        return reservationMapper.toResponseList(reservationRepository.findByUserId(userId));
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return reservationRepository.findByUserId(userId, pageable)
+                .map(reservationMapper::toResponse);
     }
 
     @Override

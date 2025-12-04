@@ -17,11 +17,16 @@ import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.ILoanService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +39,15 @@ public class LoanService implements ILoanService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final LoanMapper loanMapper;
+
+    private Sort buildSort(String sort) {
+        String[] sortParams = sort.split(",");
+        String sortBy = sortParams[0];
+        Sort.Direction direction = (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc"))
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        return Sort.by(direction, sortBy);
+    }
 
     @Override
     @Transactional
@@ -114,18 +128,22 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public List<LoanResponse> getAllLoans() {
+    public Page<LoanResponse> getAllLoans(int page, int size, String sort) {
         log.debug("Fetching all loans");
-        return loanMapper.toResponseList(loanRepository.findAll());
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return loanRepository.findAll(pageable)
+                .map(loanMapper::toResponse);
     }
 
     @Override
-    public List<LoanResponse> getLoansByUser(Long userId) {
+    public Page<LoanResponse> getLoansByUser(Long userId, int page, int size, String sort) {
         log.debug("Fetching loans for user ID: {}", userId);
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-        return loanMapper.toResponseList(loanRepository.findByUserId(userId));
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return loanRepository.findByUserId(userId, pageable)
+                .map(loanMapper::toResponse);
     }
 
     @Override
@@ -138,15 +156,19 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public List<LoanResponse> getLoansByStatus(LoanStatus status) {
+    public Page<LoanResponse> getLoansByStatus(LoanStatus status, int page, int size, String sort) {
         log.debug("Fetching loans by status: {}", status);
-        return loanMapper.toResponseList(loanRepository.findByStatus(status));
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return loanRepository.findByStatus(status, pageable)
+                .map(loanMapper::toResponse);
     }
 
     @Override
-    public List<LoanResponse> getActiveLoans() {
-        log.debug("Fetching active loans");
-        return loanMapper.toResponseList(loanRepository.findByStatus(LoanStatus.ACTIVE));
+    public Page<LoanResponse> getActiveLoans(int page, int size, String sort) {
+        log.debug("Fetching active loans with pagination - page: {}, size: {}, sort: {}", page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return loanRepository.findByStatus(LoanStatus.ACTIVE, pageable)
+                .map(loanMapper::toResponse);
     }
 
     @Override

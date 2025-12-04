@@ -4,6 +4,8 @@ import com.JohnBravos.bookhub_manager.core.enums.ReservationStatus;
 import com.JohnBravos.bookhub_manager.model.Book;
 import com.JohnBravos.bookhub_manager.model.Reservation;
 import com.JohnBravos.bookhub_manager.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,7 +31,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByBookAndStatus(Book book, ReservationStatus status);
 
     // Reservations by user ID
-    List<Reservation> findByUserId(Long userId);
+    Page<Reservation> findByUserId(Long userId, Pageable pageable);
 
     // Reservations by book ID
     List<Reservation> findByBookId(Long bookId);

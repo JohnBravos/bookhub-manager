@@ -12,6 +12,7 @@ import com.JohnBravos.bookhub_manager.service.IReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,9 +34,13 @@ public class ReservationController {
     // GET ALL RESERVATIONS (Librarian/Admin only)
     @GetMapping
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<ReservationResponse>>> getAllReservations() {
+    public ResponseEntity<ApiResponse<Page<ReservationResponse>>> getAllReservations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
+    ) {
         log.info("Fetching all reservations");
-        List<ReservationResponse> reservations = reservationService.getAllReservations();
+        Page<ReservationResponse> reservations = reservationService.getAllReservations(page, size, sort);
         return ResponseEntity.ok(ApiResponse.success(reservations, "Reservations retrieved successfully"));
     }
 
@@ -50,7 +55,12 @@ public class ReservationController {
 
     // GET RESERVATIONS BY USER (User can see their own, Librarian/Admin can see all)
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<ReservationResponse>>> getReservationsByUser(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse<Page<ReservationResponse>>> getReservationsByUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
+    ) {
         log.info("Fetching reservations for user ID: {}", userId);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -65,7 +75,7 @@ public class ReservationController {
             }
         }
 
-        List<ReservationResponse> reservations = reservationService.getReservationsByUser(userId);
+        Page<ReservationResponse> reservations = reservationService.getReservationsByUser(userId, page, size, sort);
         return ResponseEntity.ok(ApiResponse.success(reservations, "User reservations retrieved successfully"));
     }
 

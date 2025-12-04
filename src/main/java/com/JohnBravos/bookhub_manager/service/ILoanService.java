@@ -5,6 +5,7 @@ import com.JohnBravos.bookhub_manager.dto.Request.CreateLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.ReturnLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateLoanRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.LoanResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,11 +16,11 @@ public interface ILoanService {
 
     // READ
     LoanResponse getLoanById(Long id);
-    List<LoanResponse> getAllLoans();
-    List<LoanResponse> getLoansByUser(Long userId);
+    Page<LoanResponse> getAllLoans(int page, int size, String sort);
+    Page<LoanResponse> getLoansByUser(Long userId, int page, int size, String sort);
     List<LoanResponse> getLoansByBook(Long bookId);
-    List<LoanResponse> getLoansByStatus(LoanStatus status);
-    List<LoanResponse> getActiveLoans();
+    Page<LoanResponse> getLoansByStatus(LoanStatus status, int page, int size, String sort);
+    Page<LoanResponse> getActiveLoans(int page, int size, String sort);
     List<LoanResponse> getOverdueLoans();
     List<LoanResponse> getLoansDueSoon();
 

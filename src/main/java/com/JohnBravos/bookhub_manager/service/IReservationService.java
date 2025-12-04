@@ -4,6 +4,7 @@ import com.JohnBravos.bookhub_manager.core.enums.ReservationStatus;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateReservationRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.ReservationResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,8 +15,8 @@ public interface IReservationService {
 
     // READ
     ReservationResponse getReservationById(Long id);
-    List<ReservationResponse> getAllReservations();
-    List<ReservationResponse> getReservationsByUser(Long userId);
+    Page<ReservationResponse> getAllReservations(int page, int size, String sort);
+    Page<ReservationResponse> getReservationsByUser(Long userId, int page, int size, String sort);
     List<ReservationResponse> getReservationsByBook(Long bookId);
     List<ReservationResponse> getReservationsByStatus(ReservationStatus status);
     List<ReservationResponse> getActiveReservations();

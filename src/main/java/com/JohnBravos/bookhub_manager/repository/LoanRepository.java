@@ -4,6 +4,8 @@ import com.JohnBravos.bookhub_manager.core.enums.LoanStatus;
 import com.JohnBravos.bookhub_manager.model.Book;
 import com.JohnBravos.bookhub_manager.model.Loan;
 import com.JohnBravos.bookhub_manager.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +23,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     List<Loan> findByBook(Book book);
 
     // Loans by status
-    List<Loan> findByStatus(LoanStatus status);
+    Page<Loan> findByStatus(LoanStatus status, Pageable pageable);
 
     // Active loans of a user
     List<Loan> findByUserAndStatus(User user, LoanStatus status);
@@ -30,7 +32,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     List<Loan> findByBookAndStatus(Book book, LoanStatus status);
 
     // Loans by User ID
-    List<Loan> findByUserId(Long userId);
+    Page<Loan> findByUserId(Long userId, Pageable pageable);
 
     // Loans by book ID
     List<Loan> findByBookId(Long bookId);

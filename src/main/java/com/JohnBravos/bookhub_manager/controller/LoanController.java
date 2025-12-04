@@ -1,6 +1,7 @@
 package com.JohnBravos.bookhub_manager.controller;
 
 import com.JohnBravos.bookhub_manager.core.exceptions.custom.AccessDeniedException;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.JohnBravos.bookhub_manager.model.User;
@@ -34,9 +35,13 @@ public class LoanController {
     // GET ALL LOANS (Librarian/Admin only)
     @GetMapping
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<LoanResponse>>> getAllLoans() {
+    public ResponseEntity<ApiResponse<Page<LoanResponse>>> getAllLoans(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
+    ) {
         log.info("Fetching all loans");
-        List<LoanResponse> loans = loanService.getAllLoans();
+        Page<LoanResponse> loans = loanService.getAllLoans(page, size, sort);
         return ResponseEntity.ok(ApiResponse.success(loans, "Loans retrieved successfully"));
     }
 
@@ -51,7 +56,12 @@ public class LoanController {
 
     // GET LOANS BY USER (User can see their own, Librarian/Admin can see all)
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<LoanResponse>>> getLoansByUser(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse<Page<LoanResponse>>> getLoansByUser(
+            @PathVariable Long userId,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size,
+            @RequestParam (defaultValue = "id,asc") String sort
+            ) {
         log.info("Fetching loans for user ID: {}", userId);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -66,16 +76,20 @@ public class LoanController {
             }
         }
 
-        List<LoanResponse> loans = loanService.getLoansByUser(userId);
+        Page<LoanResponse> loans = loanService.getLoansByUser(userId, page, size, sort);
         return ResponseEntity.ok(ApiResponse.success(loans, "User loans retrieved successfully"));
     }
 
     // GET ACTIVE LOANS (Librarian/Admin only)
     @GetMapping("/active")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<LoanResponse>>> getActiveLoans() {
+    public ResponseEntity<ApiResponse<Page<LoanResponse>>> getActiveLoans(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
+    ) {
         log.info("Fetching active loans");
-        List<LoanResponse> loans = loanService.getActiveLoans();
+        Page<LoanResponse> loans = loanService.getActiveLoans(page, size, sort);
         return ResponseEntity.ok(ApiResponse.success(loans, "Active loans retrieved successfully"));
     }
 
