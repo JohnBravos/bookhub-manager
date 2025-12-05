@@ -85,7 +85,7 @@ export default function AdminSettings() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-6 rounded-lg border-2 border-[#8b5e34] shadow-lg">
             <div className="text-[#5a4636] text-sm font-semibold mb-2">Total Members</div>
-            <div className="text-3xl font-bold text-[#3d2c1e]">{stats.totalMembers || 0}</div>
+            <div className="text-3xl font-bold text-[#3d2c1e]">{stats.totalUsers || 0}</div>
           </div>
           <div className="bg-white p-6 rounded-lg border-2 border-[#8b5e34] shadow-lg">
             <div className="text-[#5a4636] text-sm font-semibold mb-2">Total Books</div>
