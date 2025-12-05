@@ -1,6 +1,7 @@
 package com.JohnBravos.bookhub_manager.controller;
 
 import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
+import com.JohnBravos.bookhub_manager.dto.Request.ChangePasswordRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.SystemSettingsRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
@@ -157,6 +158,15 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserStatisticsResponse>> getUserStatistics(@PathVariable Long userId) {
         UserStatisticsResponse stats = userService.getUserStatistics(userId);
         return ResponseEntity.ok(ApiResponse.success(stats, "User statistics retrieved successfully"));
+    }
+
+    // CHANGE PASSWORD (Member/Librarian/Admin)
+    @PostMapping("/change-password")
+    @PreAuthorize("hasAnyRole('MEMBER', 'LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePasswordForCurrentUser(request.newPassword());
+        return ResponseEntity.ok(ApiResponse.success(null, "Password changed successfully"));
     }
 }
 

@@ -40,6 +40,7 @@ public interface IUserService {
     boolean userExists(Long userId);
     boolean isEmailAvailable(String email);
     boolean isUsernameAvailable(String username);
+    void changePasswordForCurrentUser(String newPassword);
 
     // STATISTICS
     Object getUserStatistics();

@@ -9,10 +9,7 @@ import com.JohnBravos.bookhub_manager.core.exceptions.custom.DuplicateUsernameEx
 import com.JohnBravos.bookhub_manager.core.exceptions.custom.UserNotFoundException;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
-import com.JohnBravos.bookhub_manager.dto.Response.SystemStatsResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.UserStatisticsResponse;
+import com.JohnBravos.bookhub_manager.dto.Response.*;
 import com.JohnBravos.bookhub_manager.mapper.UserMapper;
 import com.JohnBravos.bookhub_manager.model.User;
 import com.JohnBravos.bookhub_manager.repository.BookRepository;
@@ -332,6 +329,16 @@ public class UserService implements IUserService {
                 .totalReservations(totalReservations)
                 .overdueCount(overdueCount)
                 .build();
+    }
+
+    @Override
+    public void changePasswordForCurrentUser(String newPassword) {
+        UserProfileResponse currentProfile = getCurrentUserProfile();
+        User user = userRepository.findById(currentProfile.user().id())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        log.info("Password changed for user: {}", user.getUsername());
     }
 
 }
