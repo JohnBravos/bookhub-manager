@@ -3,11 +3,7 @@ package com.JohnBravos.bookhub_manager.controller;
 import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
-import com.JohnBravos.bookhub_manager.dto.Response.ApiResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.ReservationResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
-import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
-import com.JohnBravos.bookhub_manager.model.User;
+import com.JohnBravos.bookhub_manager.dto.Response.*;
 import com.JohnBravos.bookhub_manager.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -115,5 +108,22 @@ public class UserController {
         log.info("Admin and Librarian fetching user statistics");
         Object stats = userService.getUserStatistics();
         return ResponseEntity.ok(ApiResponse.success(stats, "User statistics retrieved successfully"));
+    }    
+    // GET SYSTEM SETTINGS (Admin only)
+    @GetMapping("/admin/settings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<SystemSettingsResponse>> getSystemSettings() {
+        log.info("Fetching system settings");
+        SystemSettingsResponse settings = new SystemSettingsResponse(
+            10,      // maxLoansPerMember
+            14,      // loanPeriodDays
+            5,       // maxReservationsPerBook
+            1.5,     // lateFeePerDay
+            true,    // renewalAllowed
+            2        // maxRenewals
+        );
+        return ResponseEntity.ok(ApiResponse.success(settings, "System settings retrieved successfully"));
     }
+
 }
+
