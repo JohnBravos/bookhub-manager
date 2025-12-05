@@ -12,6 +12,10 @@ export const updateUserProfile = async (userId, data) => {
   return axios.put(`/users/${userId}`, data);
 };
 
+export const updateCurrentUserProfile = async (data) => {
+  return axios.put(`/users/profile`, data);
+};
+
 export const changePassword = async (data) => {
   return axios.post("/users/change-password", data);
 };

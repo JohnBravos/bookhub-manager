@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import { updateUserProfile, changePassword, getUserStatistics } from "../api/users";
+import { updateCurrentUserProfile, changePassword, getUserStatistics } from "../api/users";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function Profile() {
   const handleUpdateProfile = async () => {
     try {
       setError("");
-      await updateUserProfile(user?.id, formData);
+      await updateCurrentUserProfile(formData);
       setSuccessMessage("Profile updated successfully");
       setEditMode(false);
       setTimeout(() => setSuccessMessage(""), 3000);
