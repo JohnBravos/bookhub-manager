@@ -63,5 +63,5 @@ export const getAllReservationsAdmin = async (page = 0, size = 10, status = "ALL
 
 // System Statistics
 export const getSystemStats = async () => {
-  return axios.get("/admin/stats");
+  return axios.get("/users/stats/system");
 };

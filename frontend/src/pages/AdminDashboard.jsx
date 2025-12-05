@@ -19,19 +19,16 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      // Fetch admin statistics
-      const usersRes = await api.get("/users?size=1"); // Just get count
-      const booksRes = await api.get("/books?size=1");
-      const loansRes = await api.get("/loans?size=1");
-      const activeLoansRes = await api.get("/loans/active?size=1");
-      const reservationsRes = await api.get("/reservations?size=1");
+      // Fetch system statistics from new endpoint
+      const statsRes = await api.get("/users/stats/system");
+      const data = statsRes.data.data;
 
       setStats({
-        totalUsers: usersRes.data.data?.totalElements || 0,
-        totalBooks: booksRes.data.data?.totalElements || 0,
-        totalLoans: loansRes.data.data?.totalElements || 0,
-        activeLoans: activeLoansRes.data.data?.totalElements || 0,
-        totalReservations: reservationsRes.data.data?.totalElements || 0
+        totalUsers: data.totalUsers || 0,
+        totalBooks: data.totalBooks || 0,
+        totalLoans: data.totalLoans || 0,
+        activeLoans: data.activeLoans || 0,
+        totalReservations: data.totalReservations || 0
       });
     } catch (err) {
       console.error("Error fetching admin stats:", err);
