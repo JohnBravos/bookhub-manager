@@ -1,5 +1,7 @@
 package com.JohnBravos.bookhub_manager.service.impl;
 
+import com.JohnBravos.bookhub_manager.core.enums.LoanStatus;
+import com.JohnBravos.bookhub_manager.core.enums.ReservationStatus;
 import com.JohnBravos.bookhub_manager.core.enums.UserRole;
 import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
 import com.JohnBravos.bookhub_manager.core.exceptions.custom.DuplicateEmailException;
@@ -7,10 +9,14 @@ import com.JohnBravos.bookhub_manager.core.exceptions.custom.DuplicateUsernameEx
 import com.JohnBravos.bookhub_manager.core.exceptions.custom.UserNotFoundException;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
+import com.JohnBravos.bookhub_manager.dto.Response.SystemStatsResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
 import com.JohnBravos.bookhub_manager.mapper.UserMapper;
 import com.JohnBravos.bookhub_manager.model.User;
+import com.JohnBravos.bookhub_manager.repository.BookRepository;
+import com.JohnBravos.bookhub_manager.repository.LoanRepository;
+import com.JohnBravos.bookhub_manager.repository.ReservationRepository;
 import com.JohnBravos.bookhub_manager.repository.UserRepository;
 import com.JohnBravos.bookhub_manager.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +42,9 @@ import java.util.Map;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final LoanRepository loanRepository;
+    private final ReservationRepository reservationRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -280,4 +289,32 @@ public class UserService implements IUserService {
                 "suspendedUsers", userRepository.countByStatus(UserStatus.SUSPENDED)
         );
     }
+    @Override
+    public SystemStatsResponse getSystemStatistics() {
+        log.info("Fetching system statistics");
+        long totalUsers = userRepository.count();
+        long totalBooks = bookRepository.count();
+        long activeLoans = loanRepository.countByStatus(LoanStatus.ACTIVE);
+        long totalLoans = loanRepository.count();
+        long overdueLoans = loanRepository.countByStatus(LoanStatus.OVERDUE);
+        long totalReservations = reservationRepository.count();
+        long pendingReservations = reservationRepository.countByStatus(ReservationStatus.PENDING);
+        
+        // Calculate available books
+        long availableBooks = bookRepository.count(); // This would need to be calculated based on copies
+        
+        return new SystemStatsResponse(
+            totalUsers,
+            totalBooks,
+            availableBooks,
+            activeLoans,
+            totalLoans,
+            overdueLoans,
+            totalReservations,
+            pendingReservations
+        );
+    }
+
 }
+
+

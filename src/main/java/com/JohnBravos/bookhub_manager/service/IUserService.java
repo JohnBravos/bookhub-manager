@@ -4,6 +4,7 @@ import com.JohnBravos.bookhub_manager.core.enums.UserRole;
 import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
+import com.JohnBravos.bookhub_manager.dto.Response.SystemStatsResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
 import org.springframework.data.domain.Page;
@@ -41,4 +42,7 @@ public interface IUserService {
 
     // STATISTICS
     Object getUserStatistics();
+    SystemStatsResponse getSystemStatistics();
+
 }
+

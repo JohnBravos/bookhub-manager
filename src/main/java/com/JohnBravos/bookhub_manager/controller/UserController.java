@@ -142,8 +142,18 @@ public class UserController {
         // In production, you would save these to a database or config service
         return ResponseEntity.ok(ApiResponse.success(settings, "System settings updated successfully"));
     }
+    // GET SYSTEM STATISTICS (Admin/Librarian)
+    @GetMapping("/stats/system")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    public ResponseEntity<ApiResponse<SystemStatsResponse>> getSystemStatistics() {
+        log.info("Admin/Librarian fetching system statistics");
+        SystemStatsResponse stats = userService.getSystemStatistics();
+        return ResponseEntity.ok(ApiResponse.success(stats, "System statistics retrieved successfully"));
+    }
+
 
 
 }
+
 
 
