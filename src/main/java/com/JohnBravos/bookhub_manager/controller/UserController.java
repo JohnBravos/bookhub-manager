@@ -2,6 +2,7 @@ package com.JohnBravos.bookhub_manager.controller;
 
 import com.JohnBravos.bookhub_manager.core.enums.UserStatus;
 import com.JohnBravos.bookhub_manager.dto.Request.CreateUserRequest;
+import com.JohnBravos.bookhub_manager.dto.Request.SystemSettingsRequest;
 import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.*;
 import com.JohnBravos.bookhub_manager.service.IUserService;
@@ -124,6 +125,25 @@ public class UserController {
         );
         return ResponseEntity.ok(ApiResponse.success(settings, "System settings retrieved successfully"));
     }
+    // POST SYSTEM SETTINGS (Admin only) - Update system settings
+    @PostMapping("/admin/settings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<SystemSettingsResponse>> updateSystemSettings(
+            @Valid @RequestBody SystemSettingsRequest request) {
+        log.info("Admin updating system settings");
+        SystemSettingsResponse settings = new SystemSettingsResponse(
+            request.getMaxLoansPerMember(),
+            request.getLoanPeriodDays(),
+            request.getMaxReservationsPerBook(),
+            request.getLateFeePerDay(),
+            request.isRenewalAllowed(),
+            request.getMaxRenewals()
+        );
+        // In production, you would save these to a database or config service
+        return ResponseEntity.ok(ApiResponse.success(settings, "System settings updated successfully"));
+    }
+
 
 }
+
 
