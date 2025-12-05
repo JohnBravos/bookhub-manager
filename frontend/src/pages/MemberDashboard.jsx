@@ -1,7 +1,7 @@
 import useAuth from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import { getUserStatistics } from "../api/users";
 
 export default function MemberDashboard() {
   const { user } = useAuth();
@@ -14,14 +14,13 @@ export default function MemberDashboard() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const loans = await api.get("/loans/my-loans");
-        const reservations = await api.get("/reservations/my-reservations");
-        const overdue = await api.get("/loans/overdue");
+        const res = await getUserStatistics(user?.id);
+        const data = res.data.data;
 
         setStats({
-          loansCount: loans.data.data.length,
-          reservationsCount: reservations.data.data.length,
-          overdueCount: overdue.data.data.length
+          loansCount: data.activeLoans || 0,
+          reservationsCount: data.totalReservations || 0,
+          overdueCount: data.overdueCount || 0
         });
 
       } catch (err) {
@@ -29,8 +28,10 @@ export default function MemberDashboard() {
       }
     }
 
-    fetchStats();
-  }, []);
+    if (user?.id) {
+      fetchStats();
+    }
+  }, [user?.id]);
 
   return (
      <div className="bg-[#fdf8ee] p-8 h-full">

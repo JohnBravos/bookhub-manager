@@ -78,7 +78,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     // Count active reservations for a user
     long countByUserAndStatus(User user, ReservationStatus status);
-    
+
     // Count active reservations of a book
     long countByBookAndStatus(Book book, ReservationStatus status);
 
