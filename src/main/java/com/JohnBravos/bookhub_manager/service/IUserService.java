@@ -7,6 +7,7 @@ import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.SystemStatsResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
+import com.JohnBravos.bookhub_manager.dto.Response.UserStatisticsResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public interface IUserService {
     // STATISTICS
     Object getUserStatistics();
     SystemStatsResponse getSystemStatistics();
+    UserStatisticsResponse getUserStatistics(Long userId);
 
 }
 

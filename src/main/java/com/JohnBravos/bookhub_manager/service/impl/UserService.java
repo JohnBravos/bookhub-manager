@@ -12,6 +12,7 @@ import com.JohnBravos.bookhub_manager.dto.Request.UpdateUserRequest;
 import com.JohnBravos.bookhub_manager.dto.Response.SystemStatsResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserProfileResponse;
 import com.JohnBravos.bookhub_manager.dto.Response.UserResponse;
+import com.JohnBravos.bookhub_manager.dto.Response.UserStatisticsResponse;
 import com.JohnBravos.bookhub_manager.mapper.UserMapper;
 import com.JohnBravos.bookhub_manager.model.User;
 import com.JohnBravos.bookhub_manager.repository.BookRepository;
@@ -313,6 +314,24 @@ public class UserService implements IUserService {
             totalReservations,
             pendingReservations
         );
+    }
+
+    @Override
+    public UserStatisticsResponse getUserStatistics(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        long activeLoans = loanRepository.countByUserIdAndStatus(userId, LoanStatus.ACTIVE);
+        long totalBorrowed = loanRepository.countByUserId(userId);
+        long totalReservations = reservationRepository.countByUserId(userId);
+        long overdueCount = loanRepository.countByUserIdAndStatus(userId, LoanStatus.OVERDUE);
+
+        return UserStatisticsResponse.builder()
+                .activeLoans(activeLoans)
+                .totalBorrowed(totalBorrowed)
+                .totalReservations(totalReservations)
+                .overdueCount(overdueCount)
+                .build();
     }
 
 }

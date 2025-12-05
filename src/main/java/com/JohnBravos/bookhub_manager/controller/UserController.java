@@ -151,8 +151,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(stats, "System statistics retrieved successfully"));
     }
 
-
-
+    @GetMapping("/{userId}/statistics")
+    @PreAuthorize("hasAnyRole('MEMBER', 'LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<UserStatisticsResponse>> getUserStatistics(@PathVariable Long userId) {
+        UserStatisticsResponse stats = userService.getUserStatistics(userId);
+        return ResponseEntity.ok(ApiResponse.success(stats, "User statistics retrieved successfully"));
+    }
 }
 
 
