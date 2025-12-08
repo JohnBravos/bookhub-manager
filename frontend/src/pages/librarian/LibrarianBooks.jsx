@@ -63,6 +63,12 @@ export default function LibrarianBooks() {
       const authorsList = pageData?.content || [];
       console.log("Authors list:", authorsList);
       
+      // Debug: log first author structure
+      if (authorsList.length > 0) {
+        console.log("First author object keys:", Object.keys(authorsList[0]));
+        console.log("First author object:", authorsList[0]);
+      }
+      
       setAuthors(authorsList);
     } catch (err) {
       console.error("Error fetching authors:", err);
