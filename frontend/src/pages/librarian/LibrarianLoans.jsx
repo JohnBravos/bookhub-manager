@@ -17,17 +17,12 @@ export default function LibrarianLoans() {
   const fetchLoans = async () => {
     try {
       setLoading(true);
-      const res = await getAllLoansAdmin(page, 10);
+      const res = await getAllLoansAdmin(page, 10, statusFilter);
       const data = res.data.data;
-      let loansData = Array.isArray(data) ? data : [];
-
-      // Filter by status
-      if (statusFilter !== "ALL") {
-        loansData = loansData.filter((loan) => loan.status === statusFilter);
-      }
+      let loansData = data.content || [];
 
       setLoans(loansData);
-      setTotalPages(1); // Backend doesn't support pagination
+      setTotalPages(data.totalPages || 1);
       setError("");
     } catch (err) {
       console.error("Error fetching loans:", err);

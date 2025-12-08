@@ -17,15 +17,9 @@ export default function AdminReservations() {
   const fetchReservations = async () => {
     try {
       setLoading(true);
-      // Don't pass status to API - we'll filter on frontend
-      const res = await getAllReservationsAdmin(page, 10);
+      const res = await getAllReservationsAdmin(page, 10, filterStatus);
       const data = res.data.data;
       let allReservations = Array.isArray(data) ? data : data?.content || [];
-      
-      // Frontend filtering by status
-      if (filterStatus !== "ALL") {
-        allReservations = allReservations.filter(r => r.status === filterStatus);
-      }
       
       setReservations(allReservations);
       setTotalPages(data?.totalPages || 1);

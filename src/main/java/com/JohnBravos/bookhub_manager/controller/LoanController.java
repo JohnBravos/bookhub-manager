@@ -38,10 +38,11 @@ public class LoanController {
     public ResponseEntity<ApiResponse<Page<LoanResponse>>> getAllLoans(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,asc") String sort
+            @RequestParam(defaultValue = "id,asc") String sort,
+            @RequestParam(defaultValue = "ALL") String status
     ) {
         log.info("Fetching all loans");
-        Page<LoanResponse> loans = loanService.getAllLoans(page, size, sort);
+        Page<LoanResponse> loans = loanService.getAllLoans(page, size, sort, status);
         return ResponseEntity.ok(ApiResponse.success(loans, "Loans retrieved successfully"));
     }
 

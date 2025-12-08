@@ -128,11 +128,24 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public Page<LoanResponse> getAllLoans(int page, int size, String sort) {
+    public Page<LoanResponse> getAllLoans(int page, int size, String sort, String status) {
         log.debug("Fetching all loans");
         Pageable pageable = PageRequest.of(page, size, buildSort(sort));
-        return loanRepository.findAll(pageable)
-                .map(loanMapper::toResponse);
+
+        if ("ALL".equalsIgnoreCase(status)) {
+            return loanRepository.findAll(pageable)
+                    .map(loanMapper::toResponse);
+        } else {
+            try {
+                LoanStatus loanStatus = LoanStatus.valueOf(status.toUpperCase());
+                return loanRepository.findByStatus(loanStatus, pageable)
+                        .map(loanMapper::toResponse);
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid loan status: {}", status);
+                return loanRepository.findAll(pageable)
+                        .map(loanMapper::toResponse);
+            }
+        }
     }
 
     @Override

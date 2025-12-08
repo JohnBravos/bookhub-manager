@@ -16,7 +16,7 @@ public interface ILoanService {
 
     // READ
     LoanResponse getLoanById(Long id);
-    Page<LoanResponse> getAllLoans(int page, int size, String sort);
+    Page<LoanResponse> getAllLoans(int page, int size, String sort, String status);
     Page<LoanResponse> getLoansByUser(Long userId, int page, int size, String sort);
     List<LoanResponse> getLoansByBook(Long bookId);
     Page<LoanResponse> getLoansByStatus(LoanStatus status, int page, int size, String sort);
