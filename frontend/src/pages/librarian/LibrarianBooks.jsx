@@ -409,13 +409,18 @@ export default function LibrarianBooks() {
                   className="w-full px-4 py-2 border-2 border-[#c9a66b] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8b5e34]"
                   disabled={submitting}
                 >
-                  <option value="">Select an author</option>
-                  {authors.map((author) => (
+                  <option value="">
+                    {authors.length === 0 ? "No authors available" : "Select an author"}
+                  </option>
+                  {authors.length > 0 && authors.map((author) => (
                     <option key={author.id} value={author.id}>
                       {author.firstName} {author.lastName}
                     </option>
                   ))}
                 </select>
+                {authors.length === 0 && (
+                  <p className="text-sm text-red-600 mt-1">Please create authors first from Admin Authors page</p>
+                )}
               </div>
 
               <div>
