@@ -17,9 +17,14 @@ export default function LibrarianReservations() {
   const fetchReservations = async () => {
     try {
       setLoading(true);
+      console.log("Fetching reservations with status filter:", statusFilter);
       const res = await getAllReservationsAdmin(page, 10, statusFilter);
       const data = res.data.data;
       let reservationsData = data?.content || data || [];
+
+      console.log("Response data:", data);
+      console.log("Reservations after fetch:", reservationsData);
+      console.log("Statuses in response:", reservationsData.map(r => r.status));
 
       setReservations(reservationsData);
       setTotalPages(data?.totalPages || 1);

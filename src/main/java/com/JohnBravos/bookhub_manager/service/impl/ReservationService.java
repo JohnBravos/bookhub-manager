@@ -111,11 +111,22 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public Page<ReservationResponse> getAllReservations(int page, int size, String sort) {
+    public Page<ReservationResponse> getAllReservations(int page, int size, String sort, String status) {
         log.debug("Fetching all reservations");
         Pageable pageable = PageRequest.of(page, size, buildSort(sort));
-        return reservationRepository.findAll(pageable)
-                .map(reservationMapper::toResponse);
+
+        if ("ALL".equalsIgnoreCase(status)) {
+            return reservationRepository.findAll(pageable)
+                    .map(reservationMapper::toResponse);
+        } else {
+            try {
+                ReservationStatus reservationStatus = ReservationStatus.valueOf(status.toUpperCase());
+                return reservationRepository.findByStatus(reservationStatus, pageable)
+                        .map(reservationMapper::toResponse);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidReservationStatusException(status);
+            }
+        }
     }
 
     @Override
@@ -139,15 +150,19 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public List<ReservationResponse> getReservationsByStatus(ReservationStatus status) {
+    public Page<ReservationResponse> getReservationsByStatus(ReservationStatus status, int page, int size, String sort) {
         log.debug("Fetching reservations by status: {}", status);
-        return reservationMapper.toResponseList(reservationRepository.findByStatus(status));
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return reservationRepository.findByStatus(status, pageable)
+                .map(reservationMapper::toResponse);
     }
 
     @Override
-    public List<ReservationResponse> getActiveReservations() {
-        log.debug("Fetching active reservations");
-        return reservationMapper.toResponseList(reservationRepository.findByStatus(ReservationStatus.ACTIVE));
+    public Page<ReservationResponse> getActiveReservations(int page, int size, String sort) {
+        log.debug("Fetching active reservations with pagination - page: {}, size: {}, sort {}", page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, buildSort(sort));
+        return reservationRepository.findByStatus(ReservationStatus.ACTIVE, pageable)
+                .map(reservationMapper::toResponse);
     }
 
     @Override

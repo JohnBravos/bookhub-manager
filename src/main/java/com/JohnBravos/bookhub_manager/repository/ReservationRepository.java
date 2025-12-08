@@ -22,7 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByBook(Book book);
 
     // Reservations by status
-    List<Reservation> findByStatus(ReservationStatus status);
+    Page<Reservation> findByStatus(ReservationStatus status, Pageable pageable);
 
     // Active reservations of a user
     List<Reservation> findByUserAndStatus(User user, ReservationStatus status);

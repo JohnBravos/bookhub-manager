@@ -37,10 +37,11 @@ public class ReservationController {
     public ResponseEntity<ApiResponse<Page<ReservationResponse>>> getAllReservations(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,asc") String sort
+            @RequestParam(defaultValue = "id,asc") String sort,
+            @RequestParam(defaultValue = "ALL") String status
     ) {
         log.info("Fetching all reservations");
-        Page<ReservationResponse> reservations = reservationService.getAllReservations(page, size, sort);
+        Page<ReservationResponse> reservations = reservationService.getAllReservations(page, size, sort, status);
         return ResponseEntity.ok(ApiResponse.success(reservations, "Reservations retrieved successfully"));
     }
 
@@ -82,9 +83,13 @@ public class ReservationController {
     // GET ACTIVE RESERVATIONS (Librarian/Admin only)
     @GetMapping("/active")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<ReservationResponse>>> getActiveReservations() {
+    public ResponseEntity<ApiResponse<Page<ReservationResponse>>> getActiveReservations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
+    ) {
         log.info("Fetching active reservations");
-        List<ReservationResponse> reservations = reservationService.getActiveReservations();
+        Page<ReservationResponse> reservations = reservationService.getActiveReservations(page, size, sort);
         return ResponseEntity.ok(ApiResponse.success(reservations, "Active reservations retrieved successfully"));
     }
 

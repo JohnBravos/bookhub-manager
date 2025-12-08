@@ -15,11 +15,11 @@ public interface IReservationService {
 
     // READ
     ReservationResponse getReservationById(Long id);
-    Page<ReservationResponse> getAllReservations(int page, int size, String sort);
+    Page<ReservationResponse> getAllReservations(int page, int size, String sort, String status);
     Page<ReservationResponse> getReservationsByUser(Long userId, int page, int size, String sort);
     List<ReservationResponse> getReservationsByBook(Long bookId);
-    List<ReservationResponse> getReservationsByStatus(ReservationStatus status);
-    List<ReservationResponse> getActiveReservations();
+    Page<ReservationResponse> getReservationsByStatus(ReservationStatus status, int page, int size, String sort);
+    Page<ReservationResponse> getActiveReservations(int page, int size, String sort);
     List<ReservationResponse> getExpiredReservations();
     List<ReservationResponse> getReservationsExpiringSoon();
     List<ReservationResponse> getReservationQueueForBook(Long bookId);
