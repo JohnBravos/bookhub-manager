@@ -39,7 +39,19 @@ export default function LibrarianBooks() {
       setLoading(true);
       const res = await getAllBooksAdmin(page, 10);
       const data = res.data.data;
-      setBooks(data?.content || data || []);
+      console.log("Books response:", res.data);
+      console.log("Books data:", data);
+      
+      const booksData = data?.content || data || [];
+      console.log("Books list:", booksData);
+      
+      // Debug: log first book structure
+      if (booksData.length > 0) {
+        console.log("First book object keys:", Object.keys(booksData[0]));
+        console.log("First book object:", booksData[0]);
+      }
+      
+      setBooks(booksData);
       setTotalPages(data?.totalPages || 1);
       setError("");
     } catch (err) {
