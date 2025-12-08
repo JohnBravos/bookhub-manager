@@ -297,7 +297,9 @@ export default function AdminBooks() {
                       {book.title}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
-                      {book.authorName || "N/A"}
+                      {book.authors && book.authors.length > 0 
+                        ? book.authors.map(a => `${a.firstName} ${a.lastName}`).join(", ")
+                        : "N/A"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {book.isbn || "-"}

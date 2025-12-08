@@ -39,18 +39,7 @@ export default function LibrarianBooks() {
       setLoading(true);
       const res = await getAllBooksAdmin(page, 10);
       const data = res.data.data;
-      console.log("Books response:", res.data);
-      console.log("Books data:", data);
-      
       const booksData = data?.content || data || [];
-      console.log("Books list:", booksData);
-      
-      // Debug: log first book structure
-      if (booksData.length > 0) {
-        console.log("First book object keys:", Object.keys(booksData[0]));
-        console.log("First book object:", booksData[0]);
-      }
-      
       setBooks(booksData);
       setTotalPages(data?.totalPages || 1);
       setError("");
@@ -65,26 +54,11 @@ export default function LibrarianBooks() {
   const fetchAuthors = async () => {
     try {
       const res = await getAllAuthors(0, 100);
-      console.log("Raw response:", res.data);
-      
-      // The response structure should be: { success, data: { content, totalPages, ... } }
       const pageData = res.data?.data;
-      console.log("Page data:", pageData);
-      
-      // Extract content from Page object
       const authorsList = pageData?.content || [];
-      console.log("Authors list:", authorsList);
-      
-      // Debug: log first author structure
-      if (authorsList.length > 0) {
-        console.log("First author object keys:", Object.keys(authorsList[0]));
-        console.log("First author object:", authorsList[0]);
-      }
-      
       setAuthors(authorsList);
     } catch (err) {
       console.error("Error fetching authors:", err);
-      console.error("Error details:", err.response);
     }
   };
 
@@ -304,7 +278,9 @@ export default function LibrarianBooks() {
                       {book.title}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
-                      {book.authorName || "N/A"}
+                      {book.authors && book.authors.length > 0 
+                        ? book.authors.map(a => `${a.firstName} ${a.lastName}`).join(", ")
+                        : "N/A"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {book.isbn || "-"}
