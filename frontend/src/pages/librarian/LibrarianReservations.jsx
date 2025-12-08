@@ -25,6 +25,10 @@ export default function LibrarianReservations() {
       console.log("Response data:", data);
       console.log("Reservations after fetch:", reservationsData);
       console.log("Statuses in response:", reservationsData.map(r => r.status));
+      if (reservationsData.length > 0) {
+        console.log("First reservation object:", reservationsData[0]);
+        console.log("First reservation keys:", Object.keys(reservationsData[0]));
+      }
 
       setReservations(reservationsData);
       setTotalPages(data?.totalPages || 1);
@@ -100,14 +104,16 @@ export default function LibrarianReservations() {
                 reservations.map((reservation) => (
                   <tr key={reservation.id} className="hover:bg-[#fdf8ee] transition">
                     <td className="px-6 py-4 font-semibold text-[#3d2c1e]">
-                      {reservation.member?.username || "Unknown"}
+                      {reservation.user
+                        ? `${reservation.user.firstName || ""} ${reservation.user.lastName || ""}`.trim()
+                        : "Unknown"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
                       {reservation.book?.title || "Unknown"}
                     </td>
                     <td className="px-6 py-4 text-[#5a4636]">
-                      {reservation.reservedDate
-                        ? new Date(reservation.reservedDate).toLocaleDateString()
+                      {reservation.reservationDate
+                        ? new Date(reservation.reservationDate).toLocaleDateString()
                         : "N/A"}
                     </td>
                     <td className="px-6 py-4 text-center font-semibold text-[#3d2c1e]">
