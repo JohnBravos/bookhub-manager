@@ -42,7 +42,7 @@ public class Loan {
     private LocalDateTime returnDate;   // Actual return time
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "status", length = 20)
     private LoanStatus status = LoanStatus.ACTIVE;
 
     // Στο Loan entity μπορούμε να προσθέσουμε:

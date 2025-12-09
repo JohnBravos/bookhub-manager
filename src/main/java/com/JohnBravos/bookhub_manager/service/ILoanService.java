@@ -14,6 +14,10 @@ public interface ILoanService {
     // CREATE
     LoanResponse createLoan(CreateLoanRequest request);
 
+    // HANDLE LOAN REQUESTS
+    LoanResponse approveLoan(Long loanId);
+    LoanResponse rejectLoan(Long loanId);
+
     // READ
     LoanResponse getLoanById(Long id);
     Page<LoanResponse> getAllLoans(int page, int size, String sort, String status);

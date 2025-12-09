@@ -103,7 +103,7 @@ export default function Books() {
       
       const res = await borrowBook(selectedBook.id, user?.id, dueDate);
       
-      setSuccessMessage(`Successfully borrowed "${res.data.data?.book?.title || 'Book'}". Check My Loans to see your new loan!`);
+      setSuccessMessage(`Η αίτησή σας για δανεισμό του βιβλίου "${res.data.data?.book?.title || 'Βιβλίο'}" υποβλήθηκε επιτυχώς! Περιμένετε για αποδοχή από τον βιβλιοθηκάριο.`);
       setShowBorrowModal(false);
       setSelectedBook(null);
       setDueDate("");
@@ -132,7 +132,7 @@ export default function Books() {
       
       await createReservation(book.id, user?.id);
       
-      setSuccessMessage(`Successfully reserved "${book.title}". Check My Reservations to see your reservation!`);
+      setSuccessMessage(`Η αίτησή σας για κράτηση του βιβλίου "${book.title}" υποβλήθηκε επιτυχώς! Περιμένετε για αποδοχή από τον βιβλιοθηκάριο.`);
       fetchBooks();
       
       setTimeout(() => {

@@ -113,6 +113,28 @@ public class LoanController {
                 .body(ApiResponse.success(loan, "Loan created successfully"));
     }
 
+    // APPROVE PENDING LOAN REQUEST (Librarian/Admin only)
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<LoanResponse>> approveLoan(
+            @PathVariable Long id
+    ) {
+        log.info("Approving loan request with ID: {}", id);
+        LoanResponse loan = loanService.approveLoan(id);
+        return ResponseEntity.ok(ApiResponse.success(loan, "Loan request approved successfully"));
+    }
+
+    // REJECT PENDING LOAN REQUEST (Librarian/Admin only)
+    @PostMapping("/{id}/reject")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<LoanResponse>> rejectLoan(
+            @PathVariable Long id
+    ) {
+        log.info("Rejecting loan request with ID: {}", id);
+        LoanResponse loan = loanService.rejectLoan(id);
+        return ResponseEntity.ok(ApiResponse.success(loan, "Loan request rejected successfully"));
+    }
+
     // UPDATE LOAN (Extend due date - Librarian/Admin only)
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")

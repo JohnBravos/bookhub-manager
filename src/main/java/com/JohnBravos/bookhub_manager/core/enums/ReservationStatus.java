@@ -2,6 +2,7 @@ package com.JohnBravos.bookhub_manager.core.enums;
 
 public enum ReservationStatus {
     PENDING,    // Αναμονή
+    REJECTED,   // Απορριφθείσα κράτηση
     ACTIVE,     // Ενεργή κράτηση
     READY,      // Έτοιμη για παραλαβή
     FULFILLED,  // Ολοκληρωμένη Κράτηση

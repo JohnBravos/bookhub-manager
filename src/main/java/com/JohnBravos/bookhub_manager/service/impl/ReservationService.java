@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,7 +70,7 @@ public class ReservationService implements IReservationService {
 
         // Business Logic
         reservation.setReservationDate(LocalDate.now());
-        reservation.setStatus(ReservationStatus.ACTIVE);
+        reservation.setStatus(ReservationStatus.PENDING);
 
         // Calculate queue position
         int queuePosition = calculateQueuePosition(book.getId());
@@ -79,6 +80,41 @@ public class ReservationService implements IReservationService {
 
         return reservationMapper.toResponse(savedReservation);
 
+    }
+
+    @Override
+    @Transactional
+    public ReservationResponse approveReservation(Long reservationId) {
+        log.debug("Approving reservation with ID: {}", reservationId);
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
+
+        if (reservation.getStatus() != ReservationStatus.PENDING) {
+            throw new ReservationNotAllowedException("Only pending reservations can be approved");
+        }
+
+        reservation.setStatus(ReservationStatus.ACTIVE);
+        Reservation approvedReservation = reservationRepository.save(reservation);
+
+        log.info("Reservation approved successfully with ID: {}", reservationId);
+        return reservationMapper.toResponse(approvedReservation);
+    }
+
+    @Override
+    @Transactional
+    public ReservationResponse rejectReservation(Long reservationId) {
+        log.debug("Rejecting reservation with ID: {}", reservationId);
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
+
+        if (reservation.getStatus() != ReservationStatus.PENDING) {
+            throw new ReservationNotAllowedException("Only pending reservations can be rejected");
+        }
+
+        reservation.setStatus(ReservationStatus.REJECTED);
+        Reservation rejectedReservation = reservationRepository.save(reservation);
+        log.info("Reservation rejected successfully with ID: {}", reservationId);
+        return reservationMapper.toResponse(rejectedReservation);
     }
 
     // Rules validation for Reservation Creation

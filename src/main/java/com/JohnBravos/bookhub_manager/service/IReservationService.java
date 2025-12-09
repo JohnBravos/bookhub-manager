@@ -13,6 +13,10 @@ public interface IReservationService {
     // CREATE
     ReservationResponse createReservation(CreateReservationRequest request);
 
+    // HANDLE RESERVATION REQUESTS
+    ReservationResponse approveReservation(Long reservationId);
+    ReservationResponse rejectReservation(Long reservationId);
+
     // READ
     ReservationResponse getReservationById(Long id);
     Page<ReservationResponse> getAllReservations(int page, int size, String sort, String status);

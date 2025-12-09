@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllLoansAdmin } from "../../api/admin";
+import { approveLoan, rejectLoan } from "../../api/loans";
 
 export default function LibrarianLoans() {
   const [loans, setLoans] = useState([]);
@@ -8,6 +9,7 @@ export default function LibrarianLoans() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [actionLoading, setActionLoading] = useState(null);
 
   useEffect(() => {
     fetchLoans();
@@ -32,6 +34,34 @@ export default function LibrarianLoans() {
     }
   };
 
+  const handleApproveLoan = async (loanId) => {
+    try {
+      setActionLoading(loanId);
+      await approveLoan(loanId);
+      setError("");
+      fetchLoans();
+    } catch (err) {
+      console.error("Error approving loan:", err);
+      setError("Failed to approve loan");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRejectLoan = async (loanId) => {
+    try {
+      setActionLoading(loanId);
+      await rejectLoan(loanId);
+      setError("");
+      fetchLoans();
+    } catch (err) {
+      console.error("Error rejecting loan:", err);
+      setError("Failed to reject loan");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -53,7 +83,7 @@ export default function LibrarianLoans() {
 
       {/* Status Filter */}
       <div className="mb-6 flex gap-3">
-        {["ALL", "ACTIVE", "RETURNED", "OVERDUE"].map((status) => (
+        {["ALL", "PENDING", "ACTIVE", "RETURNED", "OVERDUE"].map((status) => (
           <button
             key={status}
             onClick={() => {
@@ -82,12 +112,13 @@ export default function LibrarianLoans() {
                 <th className="px-6 py-4 text-left">Loan Date</th>
                 <th className="px-6 py-4 text-left">Due Date</th>
                 <th className="px-6 py-4 text-left">Status</th>
+                <th className="px-6 py-4 text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e8dcc7]">
               {loans.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-[#5a4636]">
+                  <td colSpan="6" className="px-6 py-8 text-center text-[#5a4636]">
                     No loans found
                   </td>
                 </tr>
@@ -111,7 +142,9 @@ export default function LibrarianLoans() {
                     <td className="px-6 py-4">
                       <span
                         className={`px-3 py-1 rounded-full font-semibold text-sm ${
-                          loan.status === "ACTIVE"
+                          loan.status === "PENDING"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : loan.status === "ACTIVE"
                             ? "bg-blue-100 text-blue-700"
                             : loan.status === "RETURNED"
                             ? "bg-green-100 text-green-700"
@@ -120,6 +153,26 @@ export default function LibrarianLoans() {
                       >
                         {loan.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 flex gap-2">
+                      {loan.status === "PENDING" && (
+                        <>
+                          <button
+                            onClick={() => handleApproveLoan(loan.id)}
+                            disabled={actionLoading === loan.id}
+                            className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === loan.id ? "..." : "Approve"}
+                          </button>
+                          <button
+                            onClick={() => handleRejectLoan(loan.id)}
+                            disabled={actionLoading === loan.id}
+                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === loan.id ? "..." : "Reject"}
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))

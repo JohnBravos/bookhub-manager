@@ -35,6 +35,6 @@ public class Reservation {
     private LocalDate expiryDate;       // Πότε λήγει η κράτηση
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "status", length = 20)
     private ReservationStatus status = ReservationStatus.ACTIVE;
 }

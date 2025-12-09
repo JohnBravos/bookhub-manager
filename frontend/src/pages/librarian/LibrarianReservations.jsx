@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllReservationsAdmin } from "../../api/admin";
+import { approveReservation, rejectReservation } from "../../api/reservations";
 
 export default function LibrarianReservations() {
   const [reservations, setReservations] = useState([]);
@@ -8,6 +9,7 @@ export default function LibrarianReservations() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [actionLoading, setActionLoading] = useState(null);
 
   useEffect(() => {
     fetchReservations();
@@ -38,6 +40,34 @@ export default function LibrarianReservations() {
       setError("Failed to load reservations");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApproveReservation = async (reservationId) => {
+    try {
+      setActionLoading(reservationId);
+      await approveReservation(reservationId);
+      setError("");
+      fetchReservations();
+    } catch (err) {
+      console.error("Error approving reservation:", err);
+      setError("Failed to approve reservation");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRejectReservation = async (reservationId) => {
+    try {
+      setActionLoading(reservationId);
+      await rejectReservation(reservationId);
+      setError("");
+      fetchReservations();
+    } catch (err) {
+      console.error("Error rejecting reservation:", err);
+      setError("Failed to reject reservation");
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -91,12 +121,13 @@ export default function LibrarianReservations() {
                 <th className="px-6 py-4 text-left">Reserved Date</th>
                 <th className="px-6 py-4 text-left">Queue Position</th>
                 <th className="px-6 py-4 text-left">Status</th>
+                <th className="px-6 py-4 text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e8dcc7]">
               {reservations.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-[#5a4636]">
+                  <td colSpan="6" className="px-6 py-8 text-center text-[#5a4636]">
                     No reservations found
                   </td>
                 </tr>
@@ -133,6 +164,26 @@ export default function LibrarianReservations() {
                       >
                         {reservation.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 flex gap-2">
+                      {reservation.status === "PENDING" && (
+                        <>
+                          <button
+                            onClick={() => handleApproveReservation(reservation.id)}
+                            disabled={actionLoading === reservation.id}
+                            className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === reservation.id ? "..." : "Approve"}
+                          </button>
+                          <button
+                            onClick={() => handleRejectReservation(reservation.id)}
+                            disabled={actionLoading === reservation.id}
+                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === reservation.id ? "..." : "Reject"}
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))

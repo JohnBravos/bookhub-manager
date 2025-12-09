@@ -19,3 +19,12 @@ export const returnLoan = async (loanId) => {
 export const renewLoan = async (loanId) => {
   return api.put(`/loans/${loanId}`, { action: "renew" });
 };
+
+export const approveLoan = async (loanId) => {
+  return api.post(`/loans/${loanId}/approve`);
+};
+
+export const rejectLoan = async (loanId) => {
+  return api.post(`/loans/${loanId}/reject`);
+};
+

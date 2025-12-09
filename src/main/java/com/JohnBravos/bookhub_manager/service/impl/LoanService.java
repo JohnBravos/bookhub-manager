@@ -73,16 +73,61 @@ public class LoanService implements ILoanService {
 
         // Business Logic
         loan.setLoanDate(LocalDate.now());
-        loan.setStatus(LoanStatus.ACTIVE);
+        loan.setStatus(LoanStatus.PENDING);
 
         // Update book availability
-        book.borrowCopy();
-        bookRepository.save(book);
+        // book.borrowCopy();
+        // bookRepository.save(book);
 
         Loan savedLoan = loanRepository.save(loan);
         log.info("Loan created successfully with ID: {}", savedLoan.getId());
 
         return loanMapper.toResponse(savedLoan);
+    }
+
+    @Override
+    @Transactional
+    public LoanResponse approveLoan(Long loanId) {
+        log.info("Approving loan with ID: {}", loanId);
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFoundException(loanId));
+
+        if (loan.getStatus() != LoanStatus.PENDING) {
+            throw new LoanNotAllowedException("Only pending loans can be approved");
+        }
+
+        // Update loan status to ACTIVE
+        loan.setStatus(LoanStatus.ACTIVE);
+        loan.setLoanDate(LocalDate.now());
+
+        // Update book availability
+        Book book = loan.getBook();
+        book.borrowCopy();
+        bookRepository.save(book);
+
+        Loan approvedLoan = loanRepository.save(loan);
+        log.info("Loan approved successfully with ID: {}", loanId);
+
+        return loanMapper.toResponse(approvedLoan);
+    }
+
+    @Override
+    @Transactional
+    public LoanResponse rejectLoan(Long loanId) {
+        log.info("Rejecting loan with ID: {}", loanId);
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFoundException(loanId));
+
+        if (loan.getStatus() != LoanStatus.PENDING) {
+            throw new LoanNotAllowedException("Only pending loans can be rejected");
+        }
+
+        // Update loan status to REJECTED
+        loan.setStatus(LoanStatus.REJECTED);
+        Loan rejectedLoan = loanRepository.save(loan);
+        log.info("Loan rejected successfully with ID: {}", loanId);
+
+        return loanMapper.toResponse(rejectedLoan);
     }
 
     /**

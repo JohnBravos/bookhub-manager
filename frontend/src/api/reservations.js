@@ -21,3 +21,12 @@ export const getAllReservations = async (page = 0, size = 10) => {
 export const createReservation = async (bookId, userId) => {
   return axios.post(`/reservations`, { bookId, userId });
 };
+
+export const approveReservation = async (reservationId) => {
+  return axios.post(`/reservations/${reservationId}/approve`);
+};
+
+export const rejectReservation = async (reservationId) => {
+  return axios.post(`/reservations/${reservationId}/reject`);
+};
+

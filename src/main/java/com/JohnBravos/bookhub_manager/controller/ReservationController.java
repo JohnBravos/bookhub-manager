@@ -111,6 +111,24 @@ public class ReservationController {
                 .body(ApiResponse.success(reservation, "Reservation created successfully"));
     }
 
+    // APPROVE PENDING RESERVATION (Librarian/Admin only)
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<ReservationResponse>> approveReservation(@PathVariable Long id) {
+        log.info("Approving reservation with ID: {}", id);
+        ReservationResponse reservation = reservationService.approveReservation(id);
+        return ResponseEntity.ok(ApiResponse.success(reservation, "Reservation approved successfully"));
+    }
+
+    // REJECT PENDING RESERVATION (Librarian/Admin only)
+    @PostMapping("/{id}/reject")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<ReservationResponse>> rejectReservation(@PathVariable Long id) {
+        log.info("Rejecting reservation with ID: {}", id);
+        ReservationResponse reservation = reservationService.rejectReservation(id);
+        return ResponseEntity.ok(ApiResponse.success(reservation, "Reservation rejected successfully"));
+    }
+
     // UPDATE RESERVATION (Librarian/Admin only)
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
