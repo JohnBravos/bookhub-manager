@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllLoansAdmin } from "../../api/admin";
-import { approveLoan, rejectLoan } from "../../api/loans";
+import { approveLoan, rejectLoan, returnLoan, renewLoan } from "../../api/loans";
 
 export default function LibrarianLoans() {
   const [loans, setLoans] = useState([]);
@@ -57,6 +57,34 @@ export default function LibrarianLoans() {
     } catch (err) {
       console.error("Error rejecting loan:", err);
       setError("Failed to reject loan");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleReturnLoan = async (loanId) => {
+    try {
+      setActionLoading(loanId);
+      await returnLoan(loanId);
+      setError("");
+      fetchLoans();
+    } catch (err) {
+      console.error("Error returning loan:", err);
+      setError("Failed to return loan");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRenewLoan = async (loanId) => {
+    try {
+      setActionLoading(loanId);
+      await renewLoan(loanId);
+      setError("");
+      fetchLoans();
+    } catch (err) {
+      console.error("Error renewing loan:", err);
+      setError("Failed to renew loan");
     } finally {
       setActionLoading(null);
     }
@@ -154,7 +182,7 @@ export default function LibrarianLoans() {
                         {loan.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-6 py-4 flex gap-2 flex-wrap">
                       {loan.status === "PENDING" && (
                         <>
                           <button
@@ -170,6 +198,24 @@ export default function LibrarianLoans() {
                             className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-semibold"
                           >
                             {actionLoading === loan.id ? "..." : "Reject"}
+                          </button>
+                        </>
+                      )}
+                      {loan.status === "ACTIVE" && (
+                        <>
+                          <button
+                            onClick={() => handleReturnLoan(loan.id)}
+                            disabled={actionLoading === loan.id}
+                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === loan.id ? "..." : "Return"}
+                          </button>
+                          <button
+                            onClick={() => handleRenewLoan(loan.id)}
+                            disabled={actionLoading === loan.id}
+                            className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === loan.id ? "..." : "Renew"}
                           </button>
                         </>
                       )}
