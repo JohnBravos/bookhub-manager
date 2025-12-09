@@ -131,94 +131,90 @@ export default function MyReservations() {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reservations.map((reservation) => (
             <div
               key={reservation.id}
               className="bg-white rounded-lg shadow-md border border-[#e8dcc7] p-6 hover:shadow-lg transition"
             >
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Book Info */}
-                <div className="md:col-span-2">
-                  <h3 className="text-xl font-bold text-[#3d2c1e] mb-1">
-                    {reservation.book?.title || "Unknown Book"}
-                  </h3>
-                  <p className="text-[#75563e] font-semibold mb-2">
-                    {reservation.book?.authors && Array.isArray(reservation.book.authors) && reservation.book.authors.length > 0
-                      ? reservation.book.authors.map(author => `${author.firstName} ${author.lastName}`).join(", ")
-                      : reservation.book?.author?.firstName && reservation.book?.author?.lastName
-                      ? `${reservation.book.author.firstName} ${reservation.book.author.lastName}`
-                      : reservation.book?.author?.name || "Unknown Author"}
-                  </p>
-                  <p className="text-sm text-[#5a4636]">
-                    ISBN: {reservation.book?.isbn || "N/A"}
-                  </p>
-                </div>
-
-                {/* Reservation Details */}
-                <div className="md:col-span-2">
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Status Badge */}
-                    <div>
-                      <p className="text-xs text-[#5a4636] uppercase mb-2">
-                        Status
-                      </p>
-                      <span
-                        className={`px-3 py-1 rounded-full font-semibold text-sm ${getStatusColor(
-                          reservation.status
-                        )}`}
-                      >
-                        {reservation.status || "PENDING"}
-                      </span>
-                    </div>
-
-                    {/* Queue Position */}
-                    <div>
-                      <p className="text-xs text-[#5a4636] uppercase mb-2">
-                        Queue Position
-                      </p>
-                      <p className="font-bold text-[#3d2c1e]">
-                        {reservation.positionInQueue !== undefined && reservation.positionInQueue !== null
-                          ? `#${reservation.positionInQueue + 1}`
-                          : "#N/A"}
-                      </p>
-                    </div>
-
-                    {/* Reservation Date */}
-                    <div>
-                      <p className="text-xs text-[#5a4636] uppercase mb-2">
-                        Reserved On
-                      </p>
-                      <p className="text-[#3d2c1e]">
-                        {formatDate(reservation.reservationDate)}
-                      </p>
-                    </div>
-
-                    {/* Expected Date */}
-                    {reservation.expectedAvailableDate && (
-                      <div>
-                        <p className="text-xs text-[#5a4636] uppercase mb-2">
-                          Expected Available
-                        </p>
-                        <p className="text-[#3d2c1e]">
-                          {formatDate(reservation.expectedAvailableDate)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Cancel Button - Always show for active and pending reservations */}
-                  {(reservation.status === "PENDING" || reservation.status === "ACTIVE") && (
-                    <button
-                      onClick={() => handleCancelReservation(reservation.id)}
-                      disabled={cancelingId === reservation.id}
-                      className="mt-4 px-3 py-1 bg-red-500 text-white text-sm rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50"
-                    >
-                      {cancelingId === reservation.id ? "..." : "Cancel"}
-                    </button>
-                  )}
-                </div>
+              {/* Book Info */}
+              <div className="mb-4">
+                <h3 className="text-lg font-bold text-[#3d2c1e] mb-1">
+                  {reservation.book?.title || "Unknown Book"}
+                </h3>
+                <p className="text-[#75563e] font-semibold mb-2 text-sm">
+                  {reservation.book?.authors && Array.isArray(reservation.book.authors) && reservation.book.authors.length > 0
+                    ? reservation.book.authors.map(author => `${author.firstName} ${author.lastName}`).join(", ")
+                    : reservation.book?.author?.firstName && reservation.book?.author?.lastName
+                    ? `${reservation.book.author.firstName} ${reservation.book.author.lastName}`
+                    : reservation.book?.author?.name || "Unknown Author"}
+                </p>
+                <p className="text-xs text-[#5a4636]">
+                  ISBN: {reservation.book?.isbn || "N/A"}
+                </p>
               </div>
+
+              {/* Reservation Details */}
+              <div className="space-y-3">
+                {/* Status Badge */}
+                <div>
+                  <p className="text-xs text-[#5a4636] uppercase mb-1">
+                    Status
+                  </p>
+                  <span
+                    className={`px-3 py-1 rounded-full font-semibold text-sm ${getStatusColor(
+                      reservation.status
+                    )}`}
+                  >
+                    {reservation.status || "PENDING"}
+                  </span>
+                </div>
+
+                {/* Queue Position */}
+                <div>
+                  <p className="text-xs text-[#5a4636] uppercase">
+                    Queue Position
+                  </p>
+                  <p className="font-bold text-[#3d2c1e]">
+                    {reservation.positionInQueue !== undefined && reservation.positionInQueue !== null
+                      ? `#${reservation.positionInQueue + 1}`
+                      : "#N/A"}
+                  </p>
+                </div>
+
+                {/* Reservation Date */}
+                <div>
+                  <p className="text-xs text-[#5a4636] uppercase">
+                    Reserved On
+                  </p>
+                  <p className="text-sm text-[#3d2c1e]">
+                    {formatDate(reservation.reservationDate)}
+                  </p>
+                </div>
+
+                {/* Expected Date */}
+                {reservation.expectedAvailableDate && (
+                  <div>
+                    <p className="text-xs text-[#5a4636] uppercase">
+                      Expected Available
+                    </p>
+                    <p className="text-sm text-[#3d2c1e]">
+                      {formatDate(reservation.expectedAvailableDate)}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Cancel Button - Always show for active and pending reservations */}
+              {(reservation.status === "PENDING" || reservation.status === "ACTIVE") && (
+                <button
+                  onClick={() => handleCancelReservation(reservation.id)}
+                  disabled={cancelingId === reservation.id}
+                  className="mt-4 w-full px-3 py-2 bg-red-500 text-white text-sm rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50"
+                >
+                  {cancelingId === reservation.id ? "..." : "Cancel"}
+                </button>
+              )}
             </div>
           ))}
         </div>
