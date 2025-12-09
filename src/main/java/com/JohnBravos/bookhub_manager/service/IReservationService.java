@@ -32,6 +32,7 @@ public interface IReservationService {
     ReservationResponse updateReservation(Long reservationId, UpdateReservationRequest request);
     ReservationResponse cancelReservation(Long reservationId);
     ReservationResponse fulfillReservation(Long reservationId);
+    ReservationResponse markReservationReady(Long reservationId);
 
     // DELETE
     void deleteReservation(Long reservationId);

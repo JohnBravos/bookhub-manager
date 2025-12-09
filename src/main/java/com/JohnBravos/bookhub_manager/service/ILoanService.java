@@ -31,6 +31,7 @@ public interface ILoanService {
     // UPDATE
     LoanResponse updateLoan(Long loanId, UpdateLoanRequest request);
     LoanResponse returnLoan(ReturnLoanRequest request);
+    LoanResponse renewLoan(Long loanId);
 
     // DELETE
     void deleteLoan(Long loanId);

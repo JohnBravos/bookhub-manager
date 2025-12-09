@@ -30,3 +30,12 @@ export const rejectReservation = async (reservationId) => {
   return axios.post(`/reservations/${reservationId}/reject`);
 };
 
+export const markReservationReady = async (reservationId) => {
+  return axios.post(`/reservations/${reservationId}/ready`);
+};
+
+export const fulfillReservation = async (reservationId) => {
+  return axios.post(`/reservations/${reservationId}/fulfill`);
+};
+
+

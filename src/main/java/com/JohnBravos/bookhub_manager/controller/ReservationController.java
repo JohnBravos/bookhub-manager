@@ -140,6 +140,15 @@ public class ReservationController {
         return ResponseEntity.ok(ApiResponse.success(reservation, "Reservation updated successfully"));
     }
 
+    // MARK RESERVATION AS READY (Librarian/Admin only)
+    @PostMapping("/{id}/ready")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<ReservationResponse>> markReservationReady(@PathVariable Long id) {
+        log.info("Marking reservation as READY with ID: {}", id);
+        ReservationResponse reservation = reservationService.markReservationReady(id);
+        return ResponseEntity.ok(ApiResponse.success(reservation, "Reservation marked as ready successfully"));
+    }
+
     // CANCEL RESERVATION (User can cancel their own, Librarian/Admin can cancel any)
     @PostMapping("/{id}/cancel")
     @PreAuthorize("isAuthenticated()")

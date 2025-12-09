@@ -263,6 +263,24 @@ public class LoanService implements ILoanService {
 
     @Override
     @Transactional
+    public LoanResponse renewLoan(Long loanId) {
+        log.info("Renewing loan with ID: {}", loanId);
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFoundException(loanId));
+
+        if (loan.getStatus() != LoanStatus.ACTIVE) {
+            throw new IllegalArgumentException("Only ACTIVE loans can be renewed");
+        }
+
+        // Extend due date by 14 days
+        loan.setDueDate(loan.getDueDate().plusDays(14));
+        Loan renewedLoan = loanRepository.save(loan);
+        log.info("Loan renewed successfully with ID: {}", loanId);
+        return loanMapper.toResponse(renewedLoan);
+    }
+
+    @Override
+    @Transactional
     public LoanResponse returnLoan(ReturnLoanRequest request) {
         log.info("Returning loan with ID: {}", request.loanId());
         Loan loan = loanRepository.findById(request.loanId())
@@ -278,7 +296,7 @@ public class LoanService implements ILoanService {
         bookRepository.save(book);
 
         Loan returnedLoan = loanRepository.save(loan);
-        log.info("Book returned successfully for loan ID: ", request.loanId());
+        log.info("Book returned successfully for loan ID: {}", request.loanId());
 
         return loanMapper.toResponse(returnedLoan);
     }

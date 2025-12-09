@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllReservationsAdmin } from "../../api/admin";
-import { approveReservation, rejectReservation } from "../../api/reservations";
+import { approveReservation, rejectReservation, markReservationReady, fulfillReservation, cancelReservation } from "../../api/reservations";
 
 export default function LibrarianReservations() {
   const [reservations, setReservations] = useState([]);
@@ -66,6 +66,48 @@ export default function LibrarianReservations() {
     } catch (err) {
       console.error("Error rejecting reservation:", err);
       setError("Failed to reject reservation");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleMarkReady = async (reservationId) => {
+    try {
+      setActionLoading(reservationId);
+      await markReservationReady(reservationId);
+      setError("");
+      fetchReservations();
+    } catch (err) {
+      console.error("Error marking reservation ready:", err);
+      setError("Failed to mark reservation as ready");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleFulfill = async (reservationId) => {
+    try {
+      setActionLoading(reservationId);
+      await fulfillReservation(reservationId);
+      setError("");
+      fetchReservations();
+    } catch (err) {
+      console.error("Error fulfilling reservation:", err);
+      setError("Failed to fulfill reservation");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleCancelReservation = async (reservationId) => {
+    try {
+      setActionLoading(reservationId);
+      await cancelReservation(reservationId);
+      setError("");
+      fetchReservations();
+    } catch (err) {
+      console.error("Error cancelling reservation:", err);
+      setError("Failed to cancel reservation");
     } finally {
       setActionLoading(null);
     }
@@ -165,7 +207,7 @@ export default function LibrarianReservations() {
                         {reservation.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-6 py-4 flex gap-2 flex-wrap">
                       {reservation.status === "PENDING" && (
                         <>
                           <button
@@ -181,6 +223,42 @@ export default function LibrarianReservations() {
                             className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-semibold"
                           >
                             {actionLoading === reservation.id ? "..." : "Reject"}
+                          </button>
+                        </>
+                      )}
+                      {reservation.status === "ACTIVE" && (
+                        <>
+                          <button
+                            onClick={() => handleMarkReady(reservation.id)}
+                            disabled={actionLoading === reservation.id}
+                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === reservation.id ? "..." : "Ready"}
+                          </button>
+                          <button
+                            onClick={() => handleCancelReservation(reservation.id)}
+                            disabled={actionLoading === reservation.id}
+                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === reservation.id ? "..." : "Cancel"}
+                          </button>
+                        </>
+                      )}
+                      {reservation.status === "READY" && (
+                        <>
+                          <button
+                            onClick={() => handleFulfill(reservation.id)}
+                            disabled={actionLoading === reservation.id}
+                            className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === reservation.id ? "..." : "Fulfill"}
+                          </button>
+                          <button
+                            onClick={() => handleCancelReservation(reservation.id)}
+                            disabled={actionLoading === reservation.id}
+                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-semibold"
+                          >
+                            {actionLoading === reservation.id ? "..." : "Cancel"}
                           </button>
                         </>
                       )}

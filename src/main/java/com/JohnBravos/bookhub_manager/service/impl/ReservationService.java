@@ -287,6 +287,23 @@ public class ReservationService implements IReservationService {
 
     @Override
     @Transactional
+    public ReservationResponse markReservationReady(Long reservationId) {
+        log.info("Marking reservation as READY with ID: {}", reservationId);
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
+
+        if (reservation.getStatus() != ReservationStatus.ACTIVE) {
+            throw new IllegalArgumentException("Only ACTIVE reservations can be marked as READY");
+        }
+
+        reservation.setStatus(ReservationStatus.READY);
+        Reservation readyReservation = reservationRepository.save(reservation);
+        log.info("Reservation marked as READY successfully with ID: {}", reservationId);
+        return reservationMapper.toResponse(readyReservation);
+    }
+
+    @Override
+    @Transactional
     public void deleteReservation(Long reservationId) {
         log.info("Deleting reservation with ID: {}", reservationId);
         Reservation reservation = reservationRepository.findById(reservationId)

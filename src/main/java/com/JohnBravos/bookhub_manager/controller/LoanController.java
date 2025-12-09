@@ -146,6 +146,16 @@ public class LoanController {
         return ResponseEntity.ok(ApiResponse.success(loan, "Loan updated successfully"));
     }
 
+    // Στο LoanController.java - πρόσθεσε αυτή τη method:
+
+    @PostMapping("/{id}/renew")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<LoanResponse>> renewLoan(@PathVariable Long id) {
+        log.info("Renewing loan with ID: {}", id);
+        LoanResponse loan = loanService.renewLoan(id);
+        return ResponseEntity.ok(ApiResponse.success(loan, "Loan renewed successfully"));
+    }
+
     // RETURN LOAN (Librarian/Admin only)
     @PostMapping("/return")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
