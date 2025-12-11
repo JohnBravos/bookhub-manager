@@ -1,7 +1,5 @@
 package com.JohnBravos.bookhub_manager;
 
-import com.JohnBravos.bookhub_manager.repository.UserRepository;
-import com.JohnBravos.bookhub_manager.security.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
