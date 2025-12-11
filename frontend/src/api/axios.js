@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
   withCredentials: true,
-  timeout: 30000 // 30 seconds for slow queries
+  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || 5000)
 });
 
 api.interceptors.request.use(
