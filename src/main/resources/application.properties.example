@@ -1,0 +1,10 @@
+# BookHub Manager - Application Properties Example
+# Copy this file to application.properties and customize for your environment
+# Or use environment-specific profiles: application-dev.properties, application-prod.properties
+
+# Profile selection (dev, prod, or test)
+spring.profiles.active=dev
+
+# Default values (can be overridden by profile-specific files)
+spring.application.name=BookHub Manager
+server.error.include-message=always
