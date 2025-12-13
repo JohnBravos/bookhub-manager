@@ -48,8 +48,7 @@ public class SecurityConfig {
     private boolean allowCredentials;
 
     @Bean
-    public PasswordEncoder passwordEncoder()
-    {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -69,23 +68,22 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        
         // Parse allowed origins from environment variable
         List<String> origins = Arrays.asList(allowedOrigins.split(","));
         config.setAllowedOrigins(origins);
         log.info("CORS enabled for origins: {}", origins);
-        
+
         // Parse allowed methods
         List<String> methods = Arrays.asList(allowedMethods.split(","));
         config.setAllowedMethods(methods);
-        
+
         // Parse allowed headers
         if ("*".equals(allowedHeaders.trim())) {
             config.setAllowedHeaders(Arrays.asList("*"));
         } else {
             config.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
         }
-        
+
         // Set credentials
         config.setAllowCredentials(allowCredentials);
         config.setMaxAge(3600L);
@@ -111,6 +109,7 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()  // Swagger documentation
                         .requestMatchers("/auth/**").permitAll()    // Public endpoints για login/register
                         .requestMatchers("/books/**").permitAll()
                         .anyRequest().authenticated()  // Όλα τα άλλα endpoints απαιτούν authentication
@@ -121,8 +120,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-//        http.securityMatcher("/api/**");
 
         return http.build();
     }
