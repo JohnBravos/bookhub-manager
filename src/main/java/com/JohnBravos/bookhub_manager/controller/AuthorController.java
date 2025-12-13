@@ -8,7 +8,6 @@ import com.JohnBravos.bookhub_manager.service.IAuthorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class AuthorController {
     @GetMapping
     @Operation(summary = "Get all authors", description = "Retrieve all authors with pagination support")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Authors retrieved successfully")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Authors retrieved successfully")
     })
     public ResponseEntity<ApiResponse<Page<AuthorResponse>>> getAllAuthors(
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
@@ -46,8 +45,8 @@ public class AuthorController {
     @GetMapping("/{id}")
     @Operation(summary = "Get author by ID", description = "Retrieve a specific author by their ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Author retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Author not found")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Author retrieved successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Author not found")
     })
     public ResponseEntity<ApiResponse<AuthorResponse>> getAuthorById(
             @Parameter(description = "Author ID") @PathVariable Long id) {
@@ -59,7 +58,7 @@ public class AuthorController {
     @GetMapping("/search")
     @Operation(summary = "Search authors by name", description = "Search for authors by their name")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Authors search completed")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Authors search completed")
     })
     public ResponseEntity<ApiResponse<List<AuthorResponse>>> searchAuthors(
             @Parameter(description = "Author name to search") @RequestParam String name) {
@@ -71,7 +70,7 @@ public class AuthorController {
     @GetMapping("/with-books")
     @Operation(summary = "Get authors with books", description = "Retrieve only authors that have associated books")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Authors with books retrieved")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Authors with books retrieved")
     })
     public ResponseEntity<ApiResponse<List<AuthorResponse>>> getAuthorsWithBooks() {
         log.info("Fetching authors with books");
@@ -83,9 +82,9 @@ public class AuthorController {
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
     @Operation(summary = "Create new author", description = "Create a new author (LIBRARIAN or ADMIN only)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Author created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data"),
-            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Author created successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Insufficient permissions")
     })
     public ResponseEntity<ApiResponse<AuthorResponse>> createAuthor(
             @Parameter(description = "Author creation request") @Valid @RequestBody CreateAuthorRequest request) {
@@ -99,9 +98,9 @@ public class AuthorController {
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
     @Operation(summary = "Update author", description = "Update an existing author (LIBRARIAN or ADMIN only)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Author updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Author not found"),
-            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Author updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Author not found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Insufficient permissions")
     })
     public ResponseEntity<ApiResponse<AuthorResponse>> updateAuthor(
             @Parameter(description = "Author ID") @PathVariable Long id,
@@ -115,9 +114,9 @@ public class AuthorController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete author", description = "Delete an author (ADMIN only)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Author deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Author not found"),
-            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Author deleted successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Author not found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Insufficient permissions")
     })
     public ResponseEntity<ApiResponse<Void>> deleteAuthor(
             @Parameter(description = "Author ID") @PathVariable Long id) {
