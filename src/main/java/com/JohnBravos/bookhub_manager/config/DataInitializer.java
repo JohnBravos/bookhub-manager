@@ -22,7 +22,7 @@ public class DataInitializer {
     @Value("${app.admin.password:admin123}")
     private String adminPassword;
 
-    @Value("${app.admin.email:admin@bookhub.com")
+    @Value("${app.admin.email:admin@bookhub.com}")
     private String adminEmail;
 
     @Bean
