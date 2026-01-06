@@ -43,6 +43,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("========================================");
+        log.info("🔥 DataInitializer is running...");
+        log.info("========================================");
         createDefaultAdminIfNotExists();
     }
 
