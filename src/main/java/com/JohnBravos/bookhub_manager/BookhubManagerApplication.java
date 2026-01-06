@@ -24,13 +24,13 @@ public class BookhubManagerApplication {
 		SpringApplication.run(BookhubManagerApplication.class, args);
 	}
 
-//	@Bean
-//	public CommandLineRunner appStartupMessage() {
-//		return args -> {
-//			log.info("\n\n🚀 BookHub Manager application started successfully!");
-//			log.info("✅ All systems operational. Ready to receive requests.\n");
-//		};
-//	}
+	@Bean
+	public CommandLineRunner appStartupMessage() {
+		return args -> {
+			log.info("\n\n🚀 BookHub Manager application started successfully!");
+			log.info("✅ All systems operational. Ready to receive requests.\n");
+		};
+	}
 //
 //	@Bean
 //	public CommandLineRunner initializeAdmin(
