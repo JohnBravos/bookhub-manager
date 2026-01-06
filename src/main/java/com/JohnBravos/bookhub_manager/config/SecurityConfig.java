@@ -97,12 +97,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            CorsConfigurationSource corsConfigurationSource) throws Exception {
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .cors(cors -> cors.configurationSource(request -> {
+                    var config = new org.springframework.web.cors.CorsConfiguration();
+                    config.setAllowedOrigins(java.util.List.of("http://localhost:5174", "http://localhost:3000", "http://localhost:5173", "https://bookhub-manager.vercel.app"));
+                    config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(java.util.List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()  // Swagger documentation
                         .requestMatchers("/auth/**").permitAll()    // Public endpoints για login/register
