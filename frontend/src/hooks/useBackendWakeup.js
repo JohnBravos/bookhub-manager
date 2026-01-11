@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 
-export const useBackendWakeup = () => {
+export const useBackendWakeUp = () => {
     const [isReady, setIsReady] = useState(false);
     const [isWaking, setIsWaking] = useState(true);
 
