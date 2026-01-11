@@ -1,6 +1,16 @@
 # BookHub Manager
 
-A comprehensive library management system built with **Spring Boot 3.x** (backend) and **React + Vite** (frontend).
+## 🚀 Quick Overview
+
+BookHub Manager is a full-stack library management system built with
+Spring Boot 3 and React.
+
+It supports role-based access (Admin, Librarian, Member), book loans,
+reservations, JWT authentication, and provides a documented REST API
+via Swagger.
+
+The project demonstrates backend architecture, security, business logic,
+and deployment using Docker and cloud platforms.
 
 ## Table of Contents
 - [Features](#features)
@@ -162,7 +172,7 @@ npm run preview
 
 ```bash
 # Terminal 1: Backend
-cd c:\Users\John Bravos\IdeaProjects\bookhub-manager
+cd bookhub-manager
 mvn spring-boot:run
 
 # Wait for: "Started Application in X seconds"
@@ -461,7 +471,8 @@ git push origin feature/your-feature
 
 ## License
 
-This project is for educational purposes.
+This project was built as a portfolio project to demonstrate
+backend development skills, API design, security, and deployment practices.
 
 ## Support & Documentation
 
