@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 
-export const useBackendWakeUp = () => {
+export const useBackendWakeup = () => {
     const [isReady, setIsReady] = useState(false);
     const [isWaking, setIsWaking] = useState(true);
 
@@ -12,7 +12,7 @@ export const useBackendWakeUp = () => {
                 setIsReady(true);
                 setIsWaking(false);
             } catch (error) {
-                console.log("Backend waking up, retrying...", error);
+                console.log("Backend waking up, retrying...");
                 setTimeout(wakeBackend, 2000);
             }
         };
@@ -21,4 +21,4 @@ export const useBackendWakeUp = () => {
     }, []);
 
     return { isReady, isWaking };
-}
+};
