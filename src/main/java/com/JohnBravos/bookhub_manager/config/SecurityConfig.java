@@ -112,6 +112,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()  // Swagger documentation
                         .requestMatchers("/auth/**").permitAll()    // Public endpoints για login/register
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/books/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()  // Όλα τα άλλα endpoints απαιτούν authentication

@@ -26,8 +26,16 @@ import LibrarianReports from "./pages/librarian/LibrarianReports";
 import LibrarianMembers from "./pages/librarian/LibrarianMembers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { useBackendWakeup } from "./hooks/useBackendWakeUp";
+import { LoadingScreen } from "./components/LoadingScreen";
 
 function App() {
+  const { isReady, isWaking } = useBackendWakeup();
+
+  if (isWaking && !isReady) {
+    return <LoadingScreen message="Waking up server..." />;
+  }
+
   return (
     <AuthProvider>
       <BrowserRouter>
