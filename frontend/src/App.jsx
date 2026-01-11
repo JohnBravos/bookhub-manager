@@ -26,7 +26,7 @@ import LibrarianReports from "./pages/librarian/LibrarianReports";
 import LibrarianMembers from "./pages/librarian/LibrarianMembers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
-import { useBackendWakeup } from "./hooks/useBackendWakeUp";
+import { useBackendWakeup } from "./hooks/useBackendWakeUπ";
 import { LoadingScreen } from "./components/LoadingScreen";
 
 function App() {
