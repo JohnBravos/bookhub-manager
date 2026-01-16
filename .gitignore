@@ -19,4 +19,5 @@ target/
 
 # Environment / Secrets
 src/main/resources/application.properties
+src/main/resources/application-dev.properties
 .env
